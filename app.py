@@ -51,11 +51,12 @@ def render_tasks(task_list, category):
         for task in task_list:
             if task not in st.session_state:
                 st.session_state[task] = False
-            checked = st.checkbox(task, key=task, value=st.session_state[task])
+
+            checked = st.checkbox(task, key=task)
+            
             if checked:
-                st.session_state[task] = True
                 completed += 1
-    
+
     progress_percentage = completed / total if total > 0 else 0
     color = "red" if progress_percentage <= 0.5 else "yellow" if progress_percentage <= 0.7 else "green"
     
@@ -64,6 +65,7 @@ def render_tasks(task_list, category):
         <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px;"></div>
     </div>
     """, unsafe_allow_html=True)
+
 
 st.subheader("Tasks")
 col1, col2, col3 = st.columns(3)

@@ -92,8 +92,7 @@ def reset_tasks():
 # ================================
 # Dashboard Design
 # ================================
-st.title("📝 Task Checklist Dashboard")
-st.write("Track your tasks with automatic resets!")
+st.title("📝 Daniel's Daily Goal Tracker Dashboard")
 
 categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 

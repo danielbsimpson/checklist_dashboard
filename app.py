@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 
 # Streamlit UI
-st.title("📝 Task Checklist Dashboard")
-st.write("Track your tasks with automatic resets!")
+st.title("📝 Goals Dashboard")
+st.write("This dashboard is to help track your goals throughout the year.")
 
 categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 
@@ -43,6 +43,11 @@ monthly_tasks = [
     ":soap: Wash mats"
 ]
 
+quarterly_tasks = [
+    ":airplane_departure: Vacation Savings",
+    ":robot_face: Longterm Project"
+]
+
 def render_tasks(task_list, category):
     completed = 0
     total = len(task_list)
@@ -68,7 +73,7 @@ def render_tasks(task_list, category):
 
 
 st.subheader("Tasks")
-col1, col2, col3 = st.columns(3)
+col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     render_tasks(daily_tasks, "Daily")
@@ -78,6 +83,9 @@ with col2:
 
 with col3:
     render_tasks(monthly_tasks, "Monthly")
+
+with col4:
+    render_tasks(quarterly_tasks, "Quarterly")
 
 # task_input = st.text_input("Add a new task:")
 # category_input = st.selectbox("Select category:", categories)

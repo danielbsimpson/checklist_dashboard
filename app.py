@@ -147,7 +147,7 @@ def render_tasks(task_list, category):
         checked = st.checkbox(task, key=task, value=st.session_state[task])
         
         # Update session state based on checkbox value
-        st.session_state[task] = checked
+        st.session_state[task] = True
 
         if checked:
             st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks

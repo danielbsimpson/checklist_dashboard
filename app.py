@@ -3,11 +3,11 @@ import pandas as pd
 import datetime as dt
 
 # Function for rendering goals
-def render_tasks(task_list, category):
+def render_tasks(task_list, category, expanded=False):
     completed = 0
     total = len(task_list)
     
-    with st.expander(category):
+    with st.expander(category, expanded=expanded):
         for task in task_list:
             if task not in st.session_state:
                 st.session_state[task] = False
@@ -99,10 +99,10 @@ with st.sidebar:
 col1, col2 = st.columns(2)
 
 with col1:
-    render_tasks(daily_tasks, "Daily")
+    render_tasks(daily_tasks, "Daily", True)
 
 with col2:
-    render_tasks(weekly_tasks, "Weekly")
+    render_tasks(weekly_tasks, "Weekly", True)
     
 
 # task_input = st.text_input("Add a new task:")

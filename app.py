@@ -10,7 +10,7 @@ categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 daily_tasks = [
     "Exercise",
     "Stretch/Yoga (>20min)",
-    "Social Media (<limit)",
+    ":no_mobile_phones: Social Media (<limit)",
     "Eat in",
     "Review Budget/Goals",
     "(2x)Brush+(1x)Floss",

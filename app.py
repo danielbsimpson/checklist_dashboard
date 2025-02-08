@@ -141,17 +141,17 @@ def render_tasks(task_list, category):
     for task in task_list:
         if task not in st.session_state:
             st.session_state[task] = False
+    with st.expander():
+        for task in task_list:
+            # Get the checkbox state (checked or not)
+            checked = st.checkbox(task, key=task, value=st.session_state[task])
+            
+            # Update session state based on checkbox value
+            # st.session_state[task] = True
 
-    for task in task_list:
-        # Get the checkbox state (checked or not)
-        checked = st.checkbox(task, key=task, value=st.session_state[task])
-        
-        # Update session state based on checkbox value
-        # st.session_state[task] = True
-
-        if checked:
-            # st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks
-            completed += 1
+            if checked:
+                # st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks
+                completed += 1
     
     progress_percentage = completed / total if total > 0 else 0
     # Determine the color of the progress bar

@@ -43,9 +43,6 @@ monthly_tasks = [
     "Wash mats"
 ]
 
-def update_task_state(task):
-    st.session_state[task] = not st.session_state[task]
-
 def render_tasks(task_list, category):
     completed = 0
     total = len(task_list)
@@ -56,8 +53,8 @@ def render_tasks(task_list, category):
 
     with st.expander(category):
         for task in task_list:
-            checked = st.checkbox(task, key=task, value=st.session_state[task], on_change=update_task_state, args=(task,))
-            if checked:
+            st.session_state[task] = st.checkbox(task, key=task, value=st.session_state[task])
+            if st.session_state[task]:
                 completed += 1
     
     progress_percentage = completed / total if total > 0 else 0

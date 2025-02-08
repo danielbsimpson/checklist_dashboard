@@ -73,18 +73,17 @@ quarterly_tasks = [
     ":robot_face: Longterm Project"
 ]
 with st.sidebar:
-    render_tasks(daily_tasks, "Daily")
+    render_tasks(monthly_tasks, "Monthly")
+    render_tasks(quarterly_tasks, "Quarterly")
 st.subheader("Tasks")
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
-    render_tasks(weekly_tasks, "Weekly")
+    render_tasks(daily_tasks, "Daily")
 
 with col2:
-    render_tasks(monthly_tasks, "Monthly")
-
-with col3:
-    render_tasks(quarterly_tasks, "Quarterly")
+    render_tasks(weekly_tasks, "Weekly")
+    
 
 # task_input = st.text_input("Add a new task:")
 # category_input = st.selectbox("Select category:", categories)

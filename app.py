@@ -8,39 +8,39 @@ st.write("Track your tasks with automatic resets!")
 categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 
 daily_tasks = [
-    "Exercise",
-    "Stretch/Yoga (>20min)",
+    ":weight_lifter: Exercise",
+    ":man-cartwheeling: Stretch/Yoga (>20min)",
     ":no_mobile_phones: Social Media (<limit)",
-    "Eat in",
-    "Review Budget/Goals",
-    "(2x)Brush+(1x)Floss",
-    "Water (3L)",
-    "7 hours sleep",
+    ":sandwich: Eat in",
+    ":heavy_check_mark: Review Budget/Goals",
+    ":tooth: (2x)Brush+(1x)Floss",
+    ":droplet: Water (3L)",
+    ":sleeping: 7 hours sleep",
     "Clean (~20 min)",
-    "Read (~20 min)",
-    "Vitamins",
-    "Duolingo"
+    ":open_book: Read (~20 min)",
+    ":pill: Vitamins",
+    ":speaking_head_in_silhouette: Duolingo"
 ]
 
 weekly_tasks = [
-    "Laundry",
-    "Cleaning",
-    "Grocery Shop",
-    "Meal Prep",
-    "Website work (~2h)",
-    "Recycling",
-    "Trash",
-    "Shave/Trim",
-    "Water Plants",
-    "Weekend Exercise"
+    ":shirt: Laundry",
+    ":broom: Cleaning",
+    ":shopping_trolley: Grocery Shop",
+    ":male-cook: Meal Prep",
+    ":male-student: Personal Development",
+    ":recycle: Recycling",
+    ":wastebasket: Trash",
+    ":razor: Shave/Trim",
+    ":potted_plant: Water Plants",
+    ":running: Weekend Exercise"
 ]
 
 monthly_tasks = [
-    "Wash Sheets",
-    "Haircut",
-    "Savings Deposit",
-    "Loan Payment",
-    "Wash mats"
+    ":bed: Wash Sheets",
+    ":barber: Haircut",
+    ":moneybag: Savings Deposit",
+    ":money_with_wings: Loan Payment",
+    ":soap: Wash mats"
 ]
 
 def render_tasks(task_list, category):

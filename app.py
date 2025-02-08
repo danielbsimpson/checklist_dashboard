@@ -103,11 +103,12 @@ st.set_page_config(page_title="Daniel's Goal Tracker App",
                     layout="wide", 
                     initial_sidebar_state="expanded")
 
+
 st.markdown(
     """
     <h3 class="title">
     """ + f"""Goals Dashboard</h3>
-    <h5 class="date_title"> :calendar: {formatted_today}</h5>
+    <h5 class="date_title"> 📆 {formatted_today}</h5>
     """,
     unsafe_allow_html=True
 )

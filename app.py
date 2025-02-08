@@ -140,7 +140,7 @@ def render_tasks(task_list, category):
         checked = st.checkbox(task, key=task)
         if checked:
             completed += 1
-            st.markdown(f"~~{task}~~")  # Cross out completed tasks
+            st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks in place
     st.progress(completed / total if total > 0 else 0)  # Display progress bar
 
 st.subheader("Tasks")

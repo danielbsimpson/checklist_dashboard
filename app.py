@@ -136,20 +136,22 @@ monthly_tasks = [
 def render_tasks(task_list, category):
     completed = 0
     total = len(task_list)
-    
+
+    # Initialize session state for tasks if not already done
     for task in task_list:
-        # Use session state to track the checkbox state
         if task not in st.session_state:
             st.session_state[task] = False
-        
+
+    for task in task_list:
         checked = st.checkbox(task, key=task, value=st.session_state[task])
         
+        # Update session state based on checkbox value
         if checked:
-            st.session_state[task] = True  # Mark task as completed
+            st.session_state[task] = True
             st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks
             completed += 1
         else:
-            st.session_state[task] = False  # Mark task as not completed
+            st.session_state[task] = False
 
     st.progress(completed / total if total > 0 else 0)  # Display progress bar
 

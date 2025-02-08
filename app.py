@@ -112,9 +112,44 @@ daily_tasks = [
     "Duolingo"
 ]
 
-st.subheader("Daily Tasks")
-for task in daily_tasks:
-    st.checkbox(task, key=task)
+weekly_tasks = [
+    "Laundry",
+    "Cleaning",
+    "Grocery Shop",
+    "Meal Prep",
+    "Website work (~2h)",
+    "Recycling",
+    "Trash",
+    "Shave/Trim",
+    "Water Plants",
+    "Weekend Exercise"
+]
+
+monthly_tasks = [
+    "Wash Sheets",
+    "Haircut",
+    "Savings Deposit",
+    "Loan Payment",
+    "Wash mats"
+]
+
+st.subheader("Tasks")
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.subheader("Daily")
+    for task in daily_tasks:
+        st.checkbox(task, key=task)
+
+with col2:
+    st.subheader("Weekly")
+    for task in weekly_tasks:
+        st.checkbox(task, key=task)
+
+with col3:
+    st.subheader("Monthly")
+    for task in monthly_tasks:
+        st.checkbox(task, key=task)
 
 task_input = st.text_input("Add a new task:")
 category_input = st.selectbox("Select category:", categories)
@@ -123,17 +158,6 @@ if st.button("Add Task"):
     st.experimental_rerun()
 
 tasks = get_tasks()
-
-for category in categories:
-    st.subheader(f"{category} Tasks")
-    category_tasks = tasks[(tasks['category'] == category)]
-    for i, row in category_tasks.iterrows():
-        if row['completed']:
-            st.write(f"<span style='color: red; text-decoration: line-through;'>{row['task']}</span>", unsafe_allow_html=True)
-        else:
-            if st.checkbox(row['task'], key=i):
-                complete_task(i)
-                st.experimental_rerun()
 
 if st.button("Reset Tasks Now"):
     reset_tasks()

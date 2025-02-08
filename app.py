@@ -152,8 +152,23 @@ def render_tasks(task_list, category):
         if checked:
             # st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks
             completed += 1
+    
+    progress_percentage = completed / total if total > 0 else 0
+    # Determine the color of the progress bar
+    if progress_percentage <= 0.5:
+        color = "red"
+    elif progress_percentage <= 0.7:
+        color = "yellow"
+    else:
+        color = "green"
+    # Display the custom progress bar with the color
+    st.markdown(f"""
+    <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">
+        <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px;"></div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.progress(completed / total if total > 0 else 0)  # Display progress bar
+    # st.progress(completed / total if total > 0 else 0)  # Display progress bar
 
 st.subheader("Tasks")
 col1, col2, col3 = st.columns(3)

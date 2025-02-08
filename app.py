@@ -29,7 +29,7 @@ def render_tasks(task_list, category):
 # Streamlit UI
 st.set_page_config(layout="wide")
 st.title("📝 Goals Dashboard")
-st.write(f"{dt.date.today()}")
+st.write(f"{dt.date.today(format='%d/%m/%Y')}")
 
 categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 

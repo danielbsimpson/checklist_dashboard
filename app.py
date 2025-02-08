@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import datetime as dt
 
 # Functions
 def render_tasks(task_list, category):
@@ -28,7 +29,7 @@ def render_tasks(task_list, category):
 # Streamlit UI
 st.set_page_config(layout="wide")
 st.title("📝 Goals Dashboard")
-st.write("This dashboard is to help track your goals throughout the year.")
+st.write(f"{dt.date.today()}")
 
 categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 
@@ -73,6 +74,9 @@ quarterly_tasks = [
     ":robot_face: Longterm Project"
 ]
 with st.sidebar:
+    st.write("This application is developed to help track and tick off goals throughout the year. \
+                The goals will reset depending on the interval. \
+                The data will be stored and collected over the years to see trends.")
     render_tasks(monthly_tasks, "Monthly")
     render_tasks(quarterly_tasks, "Quarterly")
 

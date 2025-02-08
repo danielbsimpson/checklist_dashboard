@@ -150,7 +150,7 @@ def render_tasks(task_list, category):
         # st.session_state[task] = True
 
         if checked:
-            st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks
+            # st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks
             completed += 1
 
     st.progress(completed / total if total > 0 else 0)  # Display progress bar

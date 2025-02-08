@@ -40,33 +40,36 @@ def reset_tasks():
             sheet.update_cell(i + 2, 3, 0)
             sheet.update_cell(i + 2, 4, now.isoformat())
 
-reset_tasks()
+st.write("Available secrets:", list(st.secrets.keys()))
 
-# Streamlit UI
-st.title("📝 Task Checklist Dashboard")
-st.write("Track your tasks with automatic resets!")
 
-categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
+# reset_tasks()
 
-task_input = st.text_input("Add a new task:")
-category_input = st.selectbox("Select category:", categories)
-if st.button("Add Task"):
-    add_task(task_input, category_input)
-    st.experimental_rerun()
+# # Streamlit UI
+# st.title("📝 Task Checklist Dashboard")
+# st.write("Track your tasks with automatic resets!")
 
-tasks = get_tasks()
+# categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 
-for category in categories:
-    st.subheader(f"{category} Tasks")
-    category_tasks = tasks[(tasks['category'] == category)]
-    for i, row in category_tasks.iterrows():
-        if row['completed']:
-            st.write(f"<span style='color: red; text-decoration: line-through;'>{row['task']}</span>", unsafe_allow_html=True)
-        else:
-            if st.checkbox(row['task'], key=i):
-                complete_task(i)
-                st.experimental_rerun()
+# task_input = st.text_input("Add a new task:")
+# category_input = st.selectbox("Select category:", categories)
+# if st.button("Add Task"):
+#     add_task(task_input, category_input)
+#     st.experimental_rerun()
 
-if st.button("Reset Tasks Now"):
-    reset_tasks()
-    st.experimental_rerun()
+# tasks = get_tasks()
+
+# for category in categories:
+#     st.subheader(f"{category} Tasks")
+#     category_tasks = tasks[(tasks['category'] == category)]
+#     for i, row in category_tasks.iterrows():
+#         if row['completed']:
+#             st.write(f"<span style='color: red; text-decoration: line-through;'>{row['task']}</span>", unsafe_allow_html=True)
+#         else:
+#             if st.checkbox(row['task'], key=i):
+#                 complete_task(i)
+#                 st.experimental_rerun()
+
+# if st.button("Reset Tasks Now"):
+#     reset_tasks()
+#     st.experimental_rerun()

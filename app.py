@@ -1,68 +1,42 @@
 import streamlit as st
 import pandas as pd
-import sqlite3
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime, timedelta
 
-# Database setup
-def init_db():
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS tasks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        task TEXT,
-        category TEXT,
-        completed INTEGER,
-        timestamp TEXT
-    )
-    """)
-    conn.commit()
-    conn.close()
+# Google Sheets setup
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+client = gspread.authorize(creds)
+sheet = client.open("TaskChecklist").sheet1  # Change to your actual sheet name
 
-init_db()
-
-# Function to get tasks
 def get_tasks():
-    conn = sqlite3.connect("tasks.db")
-    df = pd.read_sql("SELECT * FROM tasks", conn)
-    conn.close()
-    return df
+    data = sheet.get_all_records()
+    return pd.DataFrame(data)
 
-# Function to add task
 def add_task(task, category):
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
-    c.execute("INSERT INTO tasks (task, category, completed, timestamp) VALUES (?, ?, 0, ?)", 
-              (task, category, datetime.now().isoformat()))
-    conn.commit()
-    conn.close()
+    sheet.append_row([task, category, 0, datetime.now().isoformat()])
 
-# Function to mark task as completed
-def complete_task(task_id):
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
-    c.execute("UPDATE tasks SET completed = 1 WHERE id = ?", (task_id,))
-    conn.commit()
-    conn.close()
+def complete_task(task_row):
+    sheet.update_cell(task_row + 2, 3, 1)
 
-# Function to reset tasks based on frequency
 def reset_tasks():
-    conn = sqlite3.connect("tasks.db")
-    c = conn.cursor()
     df = get_tasks()
     now = datetime.now()
-    for _, row in df.iterrows():
+    for i, row in df.iterrows():
         task_time = datetime.fromisoformat(row['timestamp'])
         if row['category'] == 'Daily' and now.date() > task_time.date():
-            c.execute("UPDATE tasks SET completed = 0, timestamp = ? WHERE id = ?", (now.isoformat(), row['id']))
+            sheet.update_cell(i + 2, 3, 0)
+            sheet.update_cell(i + 2, 4, now.isoformat())
         elif row['category'] == 'Weekly' and now - task_time > timedelta(days=7):
-            c.execute("UPDATE tasks SET completed = 0, timestamp = ? WHERE id = ?", (now.isoformat(), row['id']))
+            sheet.update_cell(i + 2, 3, 0)
+            sheet.update_cell(i + 2, 4, now.isoformat())
         elif row['category'] == 'Monthly' and now.month != task_time.month:
-            c.execute("UPDATE tasks SET completed = 0, timestamp = ? WHERE id = ?", (now.isoformat(), row['id']))
+            sheet.update_cell(i + 2, 3, 0)
+            sheet.update_cell(i + 2, 4, now.isoformat())
         elif row['category'] == 'Quarterly' and (now.month - 1) // 3 != (task_time.month - 1) // 3:
-            c.execute("UPDATE tasks SET completed = 0, timestamp = ? WHERE id = ?", (now.isoformat(), row['id']))
-    conn.commit()
-    conn.close()
+            sheet.update_cell(i + 2, 3, 0)
+            sheet.update_cell(i + 2, 4, now.isoformat())
 
 reset_tasks()
 
@@ -83,12 +57,12 @@ tasks = get_tasks()
 for category in categories:
     st.subheader(f"{category} Tasks")
     category_tasks = tasks[(tasks['category'] == category)]
-    for _, row in category_tasks.iterrows():
+    for i, row in category_tasks.iterrows():
         if row['completed']:
             st.write(f"<span style='color: red; text-decoration: line-through;'>{row['task']}</span>", unsafe_allow_html=True)
         else:
-            if st.checkbox(row['task'], key=row['id']):
-                complete_task(row['id'])
+            if st.checkbox(row['task'], key=i):
+                complete_task(i)
                 st.experimental_rerun()
 
 if st.button("Reset Tasks Now"):

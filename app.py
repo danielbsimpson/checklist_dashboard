@@ -107,7 +107,7 @@ with st.sidebar:
                 The goals will reset depending on the interval. \
                 The data will be stored and collected over the years to see trends.")
     render_tasks(monthly_tasks, f"Monthly", formatted_next_month)
-    render_tasks(quarterly_tasks, "Quarterly")
+    render_tasks(quarterly_tasks, "Quarterly", "")
 
 col1, col2 = st.columns(2)
 

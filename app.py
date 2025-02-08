@@ -75,7 +75,7 @@ quarterly_tasks = [
 with st.sidebar:
     render_tasks(monthly_tasks, "Monthly")
     render_tasks(quarterly_tasks, "Quarterly")
-st.subheader("Tasks")
+
 col1, col2 = st.columns(2)
 
 with col1:

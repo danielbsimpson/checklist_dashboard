@@ -75,7 +75,7 @@ quarterly_tasks = [
 with st.sidebar:
     render_tasks(daily_tasks, "Daily")
 st.subheader("Tasks")
-col1, col2, col3 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     render_tasks(weekly_tasks, "Weekly")

@@ -23,7 +23,7 @@ def render_tasks(task_list, category, reset_date, expanded=False):
     
     st.markdown(f"""
     <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-        <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px;"></div>
+        <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px; padding-top: 0rem;"></div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -39,17 +39,6 @@ def get_day_suffix(day):
         return "rd"
     else:
         return "th"
-
-st.markdown("""
-        <style>
-               /* Remove blank space at top and bottom */ 
-               .block-container {
-                   padding-top: 0rem;
-                   padding-bottom: 0rem;
-                }
-
-        </style>
-        """, unsafe_allow_html=True)
 
 # Variables
 current_time = dt.datetime.today()

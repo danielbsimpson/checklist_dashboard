@@ -95,37 +95,46 @@ def reset_tasks():
 st.title("📝 Task Checklist Dashboard")
 st.write("Track your tasks with automatic resets!")
 
-# Define task categories
 categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 
-# Input for new tasks
-with st.form("task_form", clear_on_submit=True):
-    task_input = st.text_input("Add a new task:")
-    category_input = st.selectbox("Select category:", categories)
-    submitted = st.form_submit_button("Add Task")
-    if submitted and task_input:
-        add_task(task_input, category_input)
-        st.experimental_rerun()
+daily_tasks = [
+    "Exercise",
+    "Stretch/Yoga (>20min)",
+    "Social Media (<limit)",
+    "Eat in",
+    "Review Budget/Goals",
+    "(2x)Brush+(1x)Floss",
+    "Water (3L)",
+    "7 hours sleep",
+    "Clean (~20 min)",
+    "Read (~20 min)",
+    "Vitamins",
+    "Duolingo"
+]
 
-# Display tasks by category
+st.subheader("Daily Tasks")
+for task in daily_tasks:
+    st.checkbox(task, key=task)
+
+task_input = st.text_input("Add a new task:")
+category_input = st.selectbox("Select category:", categories)
+if st.button("Add Task"):
+    add_task(task_input, category_input)
+    st.experimental_rerun()
+
 tasks = get_tasks()
 
 for category in categories:
     st.subheader(f"{category} Tasks")
-    category_tasks = tasks[tasks["category"] == category]
+    category_tasks = tasks[(tasks['category'] == category)]
     for i, row in category_tasks.iterrows():
-        if row["completed"]:
-            st.markdown(
-                f"<span style='color: red; text-decoration: line-through;'>{row['task']}</span>",
-                unsafe_allow_html=True
-            )
+        if row['completed']:
+            st.write(f"<span style='color: red; text-decoration: line-through;'>{row['task']}</span>", unsafe_allow_html=True)
         else:
-            # Using a unique key combining category and index for each checkbox
-            if st.checkbox(row["task"], key=f"{category}_{i}"):
+            if st.checkbox(row['task'], key=i):
                 complete_task(i)
                 st.experimental_rerun()
 
-# Button to manually reset tasks
 if st.button("Reset Tasks Now"):
     reset_tasks()
     st.experimental_rerun()

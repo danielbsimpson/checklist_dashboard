@@ -25,6 +25,10 @@ def render_tasks(task_list, category, reset_date, expanded=False):
     <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">
         <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px; padding-top: 0rem;"></div>
     </div>
+
+    <h1 style="text-align: center; margin-top: 0;">
+            Your Title Here
+        </h1>
     """, unsafe_allow_html=True)
 
 # Function to get the day suffix (st, nd, rd, th)

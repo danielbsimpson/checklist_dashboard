@@ -133,32 +133,35 @@ monthly_tasks = [
     "Wash mats"
 ]
 
+def render_tasks(task_list, category):
+    completed = 0
+    total = len(task_list)
+    for task in task_list:
+        checked = st.checkbox(task, key=task)
+        if checked:
+            completed += 1
+            st.markdown(f"~~{task}~~")  # Cross out completed tasks
+    st.progress(completed / total if total > 0 else 0)  # Display progress bar
+
 st.subheader("Tasks")
 col1, col2, col3 = st.columns(3)
 
 with col1:
     st.subheader("Daily")
-    for task in daily_tasks:
-        st.checkbox(task, key=task)
+    render_tasks(daily_tasks, "Daily")
 
 with col2:
     st.subheader("Weekly")
-    for task in weekly_tasks:
-        st.checkbox(task, key=task)
+    render_tasks(weekly_tasks, "Weekly")
 
 with col3:
     st.subheader("Monthly")
-    for task in monthly_tasks:
-        st.checkbox(task, key=task)
+    render_tasks(monthly_tasks, "Monthly")
 
 task_input = st.text_input("Add a new task:")
 category_input = st.selectbox("Select category:", categories)
 if st.button("Add Task"):
-    add_task(task_input, category_input)
     st.experimental_rerun()
 
-tasks = get_tasks()
-
 if st.button("Reset Tasks Now"):
-    reset_tasks()
     st.experimental_rerun()

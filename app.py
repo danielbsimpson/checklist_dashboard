@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
 st.write("Available secrets:", list(st.secrets.keys()))
+creds_dict = dict(st.secrets["gcp_service_account"])
 # creds_dict = json.loads(st.secrets["gcp_service_account"])
 # creds = Credentials.from_service_account_info(creds_dict)
 # client = gspread.authorize(creds)

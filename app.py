@@ -136,11 +136,21 @@ monthly_tasks = [
 def render_tasks(task_list, category):
     completed = 0
     total = len(task_list)
+    
     for task in task_list:
-        checked = st.checkbox(task, key=task)
+        # Use session state to track the checkbox state
+        if task not in st.session_state:
+            st.session_state[task] = False
+        
+        checked = st.checkbox(task, key=task, value=st.session_state[task])
+        
         if checked:
+            st.session_state[task] = True  # Mark task as completed
+            st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks
             completed += 1
-            st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks in place
+        else:
+            st.session_state[task] = False  # Mark task as not completed
+
     st.progress(completed / total if total > 0 else 0)  # Display progress bar
 
 st.subheader("Tasks")

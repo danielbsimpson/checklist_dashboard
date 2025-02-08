@@ -71,23 +71,20 @@ st.subheader("Tasks")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("Daily")
     render_tasks(daily_tasks, "Daily")
 
 with col2:
-    st.subheader("Weekly")
     render_tasks(weekly_tasks, "Weekly")
 
 with col3:
-    st.subheader("Monthly")
     render_tasks(monthly_tasks, "Monthly")
 
-task_input = st.text_input("Add a new task:")
-category_input = st.selectbox("Select category:", categories)
-if st.button("Add Task"):
-    st.experimental_rerun()
+# task_input = st.text_input("Add a new task:")
+# category_input = st.selectbox("Select category:", categories)
+# if st.button("Add Task"):
+#     st.experimental_rerun()
 
-if st.button("Reset Tasks Now"):
-    for task in daily_tasks + weekly_tasks + monthly_tasks:
-        st.session_state[task] = False
-    st.experimental_rerun()
+# if st.button("Reset Tasks Now"):
+#     for task in daily_tasks + weekly_tasks + monthly_tasks:
+#         st.session_state[task] = False
+#     st.experimental_rerun()

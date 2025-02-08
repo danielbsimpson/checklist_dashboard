@@ -3,11 +3,12 @@ import pandas as pd
 import datetime as dt
 
 # Function for rendering goals
-def render_tasks(task_list, category, expanded=False):
+def render_tasks(task_list, category, reset_date, expanded=False):
     completed = 0
     total = len(task_list)
     
     with st.expander(category, expanded=expanded):
+        st.write(f"Resets on {reset_date}")
         for task in task_list:
             if task not in st.session_state:
                 st.session_state[task] = False
@@ -105,16 +106,16 @@ with st.sidebar:
     st.write("This application is developed to help track and tick off goals throughout the year. \
                 The goals will reset depending on the interval. \
                 The data will be stored and collected over the years to see trends.")
-    render_tasks(monthly_tasks, f"Monthly - Resets on: {formatted_next_month}")
+    render_tasks(monthly_tasks, f"Monthly", formatted_next_month)
     render_tasks(quarterly_tasks, "Quarterly")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    render_tasks(daily_tasks, f"Daily - Resets on: {formatted_tomorrow}", True)
+    render_tasks(daily_tasks, f"Daily", formatted_tomorrow, True)
 
 with col2:
-    render_tasks(weekly_tasks, f"Weekly - Resets on {formatted_next_week}", True)
+    render_tasks(weekly_tasks, f"Weekly", formatted_next_week, True)
     
 
 # task_input = st.text_input("Add a new task:")

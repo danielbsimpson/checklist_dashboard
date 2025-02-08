@@ -141,7 +141,7 @@ def render_tasks(task_list, category):
     for task in task_list:
         if task not in st.session_state:
             st.session_state[task] = False
-    with st.expander():
+    with st.expander(category):
         for task in task_list:
             # Get the checkbox state (checked or not)
             checked = st.checkbox(task, key=task, value=st.session_state[task])
@@ -174,15 +174,12 @@ st.subheader("Tasks")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("Daily")
     render_tasks(daily_tasks, "Daily")
 
 with col2:
-    st.subheader("Weekly")
     render_tasks(weekly_tasks, "Weekly")
 
 with col3:
-    st.subheader("Monthly")
     render_tasks(monthly_tasks, "Monthly")
 
 task_input = st.text_input("Add a new task:")

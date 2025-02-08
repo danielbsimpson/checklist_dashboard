@@ -169,7 +169,6 @@ def render_tasks(task_list, category):
 
     # st.progress(completed / total if total > 0 else 0)  # Display progress bar
 
-st.subheader("Tasks")
 col1, col2, col3 = st.columns(3)
 
 with col1:

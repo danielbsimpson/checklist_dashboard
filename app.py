@@ -23,7 +23,7 @@ def render_tasks(task_list, category, reset_date, expanded=False):
     
     st.markdown(f"""
     <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-        <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px; padding-top: 0rem;"></div>
+        <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px; padding-top: 0rem; padding-bottom: 0rem;"></div>
     </div>
 
     <h1 style="text-align: center; margin-top: 0;">

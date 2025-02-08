@@ -51,8 +51,9 @@ def render_tasks(task_list, category):
         for task in task_list:
             if task not in st.session_state:
                 st.session_state[task] = False
-            st.session_state[task] = st.checkbox(task, key=task, value=st.session_state[task])
-            if st.session_state[task]:
+            checked = st.checkbox(task, key=task, value=st.session_state[task])
+            if checked:
+                st.session_state[task] = True
                 completed += 1
     
     progress_percentage = completed / total if total > 0 else 0

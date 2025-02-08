@@ -40,7 +40,7 @@ def get_day_suffix(day):
         return "th"
 
 
-current_time = dt.today()
+current_time = dt.datetime.today()
 formatted_date = current_time.strftime("%A, %B %-d") + get_day_suffix(current_time.day)
 # Streamlit UI
 st.set_page_config(layout="wide")

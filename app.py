@@ -7,10 +7,12 @@ from datetime import datetime, timedelta
 
 # Google Sheets setup
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds_dict = json.loads(st.secrets["gcp_service_account"])
-creds = Credentials.from_service_account_info(creds_dict)
-client = gspread.authorize(creds)
-sheet = client.open("TaskChecklist").sheet1  # Change to your actual sheet name
+
+st.write("Available secrets:", list(st.secrets.keys()))
+# creds_dict = json.loads(st.secrets["gcp_service_account"])
+# creds = Credentials.from_service_account_info(creds_dict)
+# client = gspread.authorize(creds)
+# sheet = client.open("TaskChecklist").sheet1  # Change to your actual sheet name
 
 def get_tasks():
     data = sheet.get_all_records()
@@ -39,9 +41,6 @@ def reset_tasks():
         elif row['category'] == 'Quarterly' and (now.month - 1) // 3 != (task_time.month - 1) // 3:
             sheet.update_cell(i + 2, 3, 0)
             sheet.update_cell(i + 2, 4, now.isoformat())
-
-st.write("Available secrets:", list(st.secrets.keys()))
-
 
 # reset_tasks()
 

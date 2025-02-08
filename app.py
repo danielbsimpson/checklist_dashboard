@@ -113,7 +113,7 @@ st.markdown(
             transform: translateX(-50%);
             font-size: 2.5em;
             font-weight: bold;
-            padding: 10px 0;
+            padding: 20px 0;
         }
     </style>
     <h1 class="title">📝 Goals Dashboard</h1>

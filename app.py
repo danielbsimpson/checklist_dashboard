@@ -43,23 +43,26 @@ monthly_tasks = [
     "Wash mats"
 ]
 
+def update_task_state(task):
+    st.session_state[task] = not st.session_state.get(task, False)
+
 def render_tasks(task_list, category):
-    completed = 0
+    completed = sum(st.session_state.get(task, False) for task in task_list)
     total = len(task_list)
-
-    for task in task_list:
-        if task not in st.session_state:
-            st.session_state[task] = False
-
+    
     with st.expander(category):
         for task in task_list:
-            st.session_state[task] = st.checkbox(task, key=task, value=st.session_state[task])
-            if st.session_state[task]:
-                completed += 1
+            st.checkbox(
+                task, 
+                key=task, 
+                value=st.session_state.get(task, False), 
+                on_change=update_task_state, 
+                args=(task,)
+            )
     
     progress_percentage = completed / total if total > 0 else 0
     color = "red" if progress_percentage <= 0.5 else "yellow" if progress_percentage <= 0.7 else "green"
-
+    
     st.markdown(f"""
     <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">
         <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px;"></div>

@@ -108,7 +108,7 @@ st.markdown(
     <style>
         .title {
             position: absolute;
-            top: -50;
+            top: -20;
             left: 50%;
             transform: translateX(-50%);
             font-size: 2.5em;

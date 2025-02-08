@@ -117,7 +117,8 @@ st.markdown(
         }
     </style>
     <h1 class="title">
-    """ + f"""📝 Goals Dashboard {formatted_today}</h1>
+    """ + f"""📝 Goals Dashboard</h1>
+    <h2 class="date_title"> {formatted_today}</h2>
     """,
     unsafe_allow_html=True
 )

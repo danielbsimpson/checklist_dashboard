@@ -105,17 +105,6 @@ st.set_page_config(page_title="Daniel's Goal Tracker App",
 
 st.markdown(
     """
-    <style>
-        .title {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2.5em;
-            font-weight: bold;
-            padding: 10px 0;
-        }
-    </style>
     <h1 class="title">
     """ + f"""📝 Goals Dashboard</h1>
     <h2 class="date_title"> {formatted_today}</h2>

@@ -92,7 +92,7 @@ def reset_tasks():
 # ================================
 # Dashboard Design
 # ================================
-st.title("📝 Daniel's Daily Goal Tracker")
+st.title("📝 Daniel's Goal Tracking App")
 
 categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 

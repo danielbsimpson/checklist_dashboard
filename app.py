@@ -1,12 +1,14 @@
 import streamlit as st
 import pandas as pd
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+import json
+from google.oauth2.service_account import Credentials
 from datetime import datetime, timedelta
 
 # Google Sheets setup
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
+creds_dict = json.loads(st.secrets["gcp_service_account"])
+creds = Credentials.from_service_account_info(creds_dict)
 client = gspread.authorize(creds)
 sheet = client.open("TaskChecklist").sheet1  # Change to your actual sheet name
 

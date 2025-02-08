@@ -147,11 +147,11 @@ def render_tasks(task_list, category):
         checked = st.checkbox(task, key=task, value=st.session_state[task])
         
         # Update session state based on checkbox value
-        st.session_state[task] = True
+        # st.session_state[task] = True
 
-        if checked:
-            st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks
-            completed += 1
+        # if checked:
+        #     st.markdown(f"<s>{task}</s>", unsafe_allow_html=True)  # Cross out completed tasks
+        #     completed += 1
 
     st.progress(completed / total if total > 0 else 0)  # Display progress bar
 

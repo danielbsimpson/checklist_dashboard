@@ -12,7 +12,7 @@ creds_dict = dict(st.secrets["gcp_service_account"])
 # creds_dict = json.loads(st.secrets["gcp_service_account"])
 creds = Credentials.from_service_account_info(creds_dict)
 client = gspread.authorize(creds)
-sheet = client.open("TaskChecklist").sheet1  # Change to your actual sheet name
+sheet = client.open("checklist_storage").sheet1  # Change to your actual sheet name
 
 def get_tasks():
     data = sheet.get_all_records()

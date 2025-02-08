@@ -41,11 +41,23 @@ def get_day_suffix(day):
 
 
 current_time = dt.datetime.today()
-formatted_date = current_time.strftime("%A, %B %-d") + get_day_suffix(current_time.day)
+tomorrow = current_time = dt.timedelta(days=1)
+
+# Get beginning of next week (assuming Monday as the start of the week)
+days_until_monday = (7 - current_time.weekday()) % 7  # Days until next Monday
+next_week_start = current_time + dt.timedelta(days=days_until_monday or 7)
+# Get beginning of next month
+next_month_start = dt.datetime(current_time.year, current_time.month % 12 + 1, 1)
+
+formatted_today = current_time.strftime("%A, %B %-d") + get_day_suffix(current_time.day)
+formatted_tomorrow = tomorrow.strftime("%A, %B %-d") + get_day_suffix(tomorrow.day)
+formatted_next_week = next_week_start.strftime("%A, %B %-d") + get_day_suffix(next_week_start.day)
+formatted_next_month = next_month_start.strftime("%A, %B %-d") + get_day_suffix(next_month_start.day)
+
 # Streamlit UI
 st.set_page_config(layout="wide")
 st.title("📝 Goals Dashboard")
-st.write(f"{formatted_date}")
+st.write(f"{formatted_today}")
 
 categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 
@@ -93,16 +105,16 @@ with st.sidebar:
     st.write("This application is developed to help track and tick off goals throughout the year. \
                 The goals will reset depending on the interval. \
                 The data will be stored and collected over the years to see trends.")
-    render_tasks(monthly_tasks, "Monthly")
+    render_tasks(monthly_tasks, f"Monthly - Resets on: {formatted_next_month}")
     render_tasks(quarterly_tasks, "Quarterly")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    render_tasks(daily_tasks, "Daily", True)
+    render_tasks(daily_tasks, f"Daily - Resets on: {formatted_tomorrow}", True)
 
 with col2:
-    render_tasks(weekly_tasks, "Weekly", True)
+    render_tasks(weekly_tasks, f"Weekly - Resets on {formatted_next_week}", True)
     
 
 # task_input = st.text_input("Add a new task:")

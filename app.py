@@ -105,9 +105,9 @@ st.set_page_config(page_title="Daniel's Goal Tracker App",
 
 st.markdown(
     """
-    <h1 class="title">
-    """ + f"""📝 Goals Dashboard</h1>
-    <h2 class="date_title"> {formatted_today}</h2>
+    <h3 class="title">
+    """ + f"""📝 Goals Dashboard</h3>
+    <h5 class="date_title"> {formatted_today}</h5>
     """,
     unsafe_allow_html=True
 )

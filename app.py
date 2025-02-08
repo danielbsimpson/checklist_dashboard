@@ -41,7 +41,7 @@ def get_day_suffix(day):
 
 
 current_time = dt.datetime.today()
-tomorrow = current_time = dt.timedelta(days=1)
+tomorrow = current_time + dt.timedelta(days=1)
 
 # Get beginning of next week (assuming Monday as the start of the week)
 days_until_monday = (7 - current_time.weekday()) % 7  # Days until next Monday

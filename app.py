@@ -182,10 +182,10 @@ with col2:
 with col3:
     render_tasks(monthly_tasks, "Monthly")
 
-task_input = st.text_input("Add a new task:")
-category_input = st.selectbox("Select category:", categories)
-if st.button("Add Task"):
-    st.experimental_rerun()
+# task_input = st.text_input("Add a new task:")
+# category_input = st.selectbox("Select category:", categories)
+# if st.button("Add Task"):
+#     st.experimental_rerun()
 
-if st.button("Reset Tasks Now"):
-    st.experimental_rerun()
+# if st.button("Reset Tasks Now"):
+#     st.experimental_rerun()

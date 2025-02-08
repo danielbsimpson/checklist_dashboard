@@ -1,7 +1,32 @@
 import streamlit as st
 import pandas as pd
 
+# Functions
+def render_tasks(task_list, category):
+    completed = 0
+    total = len(task_list)
+    
+    with st.expander(category):
+        for task in task_list:
+            if task not in st.session_state:
+                st.session_state[task] = False
+
+            checked = st.checkbox(task, key=task)
+            
+            if checked:
+                completed += 1
+
+    progress_percentage = completed / total if total > 0 else 0
+    color = "red" if progress_percentage <= 0.5 else "yellow" if progress_percentage <= 0.7 else "green"
+    
+    st.markdown(f"""
+    <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">
+        <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px;"></div>
+    </div>
+    """, unsafe_allow_html=True)
+
 # Streamlit UI
+st.set_page_config(layout="wide")
 st.title("📝 Goals Dashboard")
 st.write("This dashboard is to help track your goals throughout the year.")
 
@@ -47,44 +72,18 @@ quarterly_tasks = [
     ":airplane_departure: Vacation Savings",
     ":robot_face: Longterm Project"
 ]
-
-def render_tasks(task_list, category):
-    completed = 0
-    total = len(task_list)
-    
-    with st.expander(category):
-        for task in task_list:
-            if task not in st.session_state:
-                st.session_state[task] = False
-
-            checked = st.checkbox(task, key=task)
-            
-            if checked:
-                completed += 1
-
-    progress_percentage = completed / total if total > 0 else 0
-    color = "red" if progress_percentage <= 0.5 else "yellow" if progress_percentage <= 0.7 else "green"
-    
-    st.markdown(f"""
-    <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">
-        <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px;"></div>
-    </div>
-    """, unsafe_allow_html=True)
-
-
+with st.sidebar:
+    render_tasks(daily_tasks, "Daily")
 st.subheader("Tasks")
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(4)
 
 with col1:
-    render_tasks(daily_tasks, "Daily")
-
-with col2:
     render_tasks(weekly_tasks, "Weekly")
 
-with col3:
+with col2:
     render_tasks(monthly_tasks, "Monthly")
 
-with col4:
+with col3:
     render_tasks(quarterly_tasks, "Quarterly")
 
 # task_input = st.text_input("Add a new task:")

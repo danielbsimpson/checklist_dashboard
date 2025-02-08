@@ -40,7 +40,18 @@ def get_day_suffix(day):
     else:
         return "th"
 
+st.markdown("""
+        <style>
+               /* Remove blank space at top and bottom */ 
+               .block-container {
+                   padding-top: 0rem;
+                   padding-bottom: 0rem;
+                }
 
+        </style>
+        """, unsafe_allow_html=True)
+
+# Variables
 current_time = dt.datetime.today()
 tomorrow = current_time + dt.timedelta(days=1)
 

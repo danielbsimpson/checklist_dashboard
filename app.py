@@ -116,11 +116,11 @@ st.markdown(
             padding: 10px 0;
         }
     </style>
-    <h1 class="title">📝 Goals Dashboard</h1>
+    <h1 class="title">
+    """ + f"""📝 Goals Dashboard {formatted_today}</h1>
     """,
     unsafe_allow_html=True
 )
-st.write(f"{formatted_today}")
 
 with st.sidebar:
     st.write("This application is developed to help track and tick off goals throughout the year. \

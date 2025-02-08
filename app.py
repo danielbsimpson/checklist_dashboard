@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import datetime as dt
 
-# Functions
+# Function for rendering goals
 def render_tasks(task_list, category):
     completed = 0
     total = len(task_list)
@@ -26,10 +26,26 @@ def render_tasks(task_list, category):
     </div>
     """, unsafe_allow_html=True)
 
+# Function to get the day suffix (st, nd, rd, th)
+def get_day_suffix(day):
+    if 11 <= day <= 13:
+        return "th"
+    elif day % 10 == 1:
+        return "st"
+    elif day % 10 == 2:
+        return "nd"
+    elif day % 10 == 3:
+        return "rd"
+    else:
+        return "th"
+
+
+current_time = dt.today()
+formatted_date = current_time.strftime("%A, %B %-d") + get_day_suffix(current_time.day)
 # Streamlit UI
 st.set_page_config(layout="wide")
 st.title("📝 Goals Dashboard")
-st.write(f"{dt.date.today()}")
+st.write(f"{formatted_date}")
 
 categories = ["Daily", "Weekly", "Monthly", "Quarterly"]
 

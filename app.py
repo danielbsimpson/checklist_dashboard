@@ -107,7 +107,7 @@ st.markdown("""
     <style>
     div[data-testid="stToolbar"] {
         align-items: center;
-        padding-left: 40px;
+        padding-left: 20px;
     }
     div[data-testid="stToolbar"]::before {
         content:""" + f""" "Goals Dashboard 📆 {formatted_today}";"""+

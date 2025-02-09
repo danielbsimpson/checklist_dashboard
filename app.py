@@ -19,7 +19,7 @@ def render_tasks(task_list, category, reset_date, expanded=False):
                 completed += 1
 
     progress_percentage = completed / total if total > 0 else 0
-    color = "red" if progress_percentage <= 0.5 else "yellow" if progress_percentage <= 0.7 else "green"
+    color = "red" if progress_percentage <= 0.25 else "orange" if progress_percentage <= 0.5 else "yellow" if progress_percentage <= 0.7 else "green"
     
     st.markdown(f"""
     <div style="width: 100%; background-color: #e0e0e0; border-radius: 5px;">

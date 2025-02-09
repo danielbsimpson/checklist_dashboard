@@ -107,13 +107,12 @@ st.markdown("""
     <style>
     div[data-testid="stToolbar"] {
         display: flex;
-        justify-content: flex-start;
         align-items: left;
         padding-left: 40px;
     }
     div[data-testid="stToolbar"]::before {
-        content:""" + f""" "Goals Dashboard 📆 {formatted_today}                   ";"""+
-        """font-size: 18px;
+        content:""" + f""" "Goals Dashboard 📆 {formatted_today}";"""+
+        """font-size: 22px;
         font-weight: bold;
         color: white;
     }

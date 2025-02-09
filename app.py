@@ -18,8 +18,6 @@ def render_tasks(task_list, category, reset_date, expanded=False):
             if checked:
                 completed += 1
 
-    st.text("")
-    
     progress_percentage = completed / total if total > 0 else 0
     color = "red" if progress_percentage <= 0.25 else "orange" if progress_percentage <= 0.5 else "yellow" if progress_percentage <= 0.7 else "green"
     
@@ -28,6 +26,8 @@ def render_tasks(task_list, category, reset_date, expanded=False):
         <div style="width: {progress_percentage * 100}%; background-color: {color}; height: 20px; border-radius: 5px; padding-top: 0rem; padding-bottom: 0rem;"></div>
     </div>
     """, unsafe_allow_html=True)
+
+    st.text("")
 
 # Function to get the day suffix (st, nd, rd, th)
 def get_day_suffix(day):

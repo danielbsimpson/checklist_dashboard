@@ -99,9 +99,9 @@ quarterly_tasks = [
 ]
 
 # Streamlit UI
-st.set_page_config(page_title="Daniel's Goal Tracker App",
-                    layout="wide", 
-                    initial_sidebar_state="expanded")
+# st.set_page_config(page_title="Daniel's Goal Tracker App",
+#                     layout="wide", 
+#                     initial_sidebar_state="expanded")
 
 st.markdown("""
     <style>

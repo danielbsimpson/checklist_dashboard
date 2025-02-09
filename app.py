@@ -122,7 +122,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.markdown(
-    """
+    f"""
     <h5 class="date_title"> 📆 {formatted_today}</h5>
     """,
     unsafe_allow_html=True

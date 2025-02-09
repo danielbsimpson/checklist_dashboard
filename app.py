@@ -106,7 +106,6 @@ st.set_page_config(page_title="Daniel's Goal Tracker App",
 st.markdown("""
     <style>
     div[data-testid="stToolbar"] {
-        display: flex;
         align-items: left;
         padding-left: 40px;
     }

@@ -120,7 +120,23 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
-
+st.markdown(f"""
+    <style>
+    div[data-testid="stToolbar"] {{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 20px;
+    }}
+    div[data-testid="stToolbar"]::after {{
+        content: "📆 {formatted_today}";
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+    }}
+    </style>
+    """, unsafe_allow_html=True)
+    
 st.markdown(
     f"""
     <h5 class="date_title"> 📆 {formatted_today}</h5>

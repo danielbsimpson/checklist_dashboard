@@ -112,7 +112,7 @@ st.markdown("""
         padding-left: 40px;
     }
     div[data-testid="stToolbar"]::before {
-        content:""" + f""" "Goals Dashboard 📆 {formatted_today}";"""+
+        content:""" + f""" "Goals Dashboard 📆 {formatted_today}                   ";"""+
         """font-size: 18px;
         font-weight: bold;
         color: white;

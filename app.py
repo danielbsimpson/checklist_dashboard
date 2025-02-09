@@ -103,44 +103,23 @@ st.set_page_config(page_title="Daniel's Goal Tracker App",
                     layout="wide", 
                     initial_sidebar_state="expanded")
 
-# Custom CSS to center text on the entire screen
-st.markdown(f"""
+st.markdown("""
     <style>
-    /* Center text in the middle of the app screen */
-    .css-1v0mbdj {{
+    div[data-testid="stToolbar"] {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        height: 100%;
-    }}
-    .date_title {{
-        font-size: 20px;
+        padding-left: 20px;
+    }
+    div[data-testid="stToolbar"]::before {
+        content:""" + f""" "Goals Dashboard 📆 {formatted_today}";"""+
+        """font-size: 18px;
         font-weight: bold;
         color: white;
-    }}
+        padding-right: 20px;
+    }
     </style>
     """, unsafe_allow_html=True)
-
-# Insert the centered date text in the app body
-st.markdown(f'<h5 class="date_title">Goals Dashboard 📆 {formatted_today}</h5>', unsafe_allow_html=True)
-
-# st.markdown("""
-#     <style>
-#     /* Center text in the menu bar */
-#     div[data-testid="stToolbar"] {
-#         display: flex;
-#         justify-content: center;
-#         align-items: center;
-#     }
-#     div[data-testid="stToolbar"]::before {
-#         content:""" + f""" "Goals Dashboard 📆 {formatted_today}";"""+
-#         """font-size: 18px;
-#         font-weight: bold;
-#         color: white;
-#         padding-right: 20px;
-#     }
-#     </style>
-#     """, unsafe_allow_html=True)
 
 
 with st.sidebar:

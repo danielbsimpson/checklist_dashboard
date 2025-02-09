@@ -109,14 +109,14 @@ st.markdown("""
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        padding-left: 20px;
+        padding-left: 40px;
     }
     div[data-testid="stToolbar"]::before {
         content:""" + f""" "Goals Dashboard 📆 {formatted_today}";"""+
         """font-size: 18px;
         font-weight: bold;
         color: white;
-        padding-left: 20px;
+        padding-left: 40px;
     }
     </style>
     """, unsafe_allow_html=True)

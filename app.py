@@ -18,6 +18,8 @@ def render_tasks(task_list, category, reset_date, expanded=False):
             if checked:
                 completed += 1
 
+    st.text("")
+    
     progress_percentage = completed / total if total > 0 else 0
     color = "red" if progress_percentage <= 0.25 else "orange" if progress_percentage <= 0.5 else "yellow" if progress_percentage <= 0.7 else "green"
     

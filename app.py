@@ -99,21 +99,23 @@ quarterly_tasks = [
 ]
 
 # Streamlit UI
-# st.set_page_config(page_title="Daniel's Goal Tracker App",
-#                     layout="wide", 
-#                     initial_sidebar_state="expanded")
+st.set_page_config(page_title="Daniel's Goal Tracker App",
+                    layout="wide", 
+                    initial_sidebar_state="expanded")
 
 st.markdown("""
     <style>
     div[data-testid="stToolbar"] {
         align-items: center;
-        padding-left: 20px;
+        display: flex;
+        justify-content: flex-start;
     }
     div[data-testid="stToolbar"]::before {
         content:""" + f""" "Goals Dashboard 📆 {formatted_today}";"""+
         """font-size: 22px;
         font-weight: bold;
         color: white;
+        padding-left: 20px;
     }
     </style>
     """, unsafe_allow_html=True)

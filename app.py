@@ -103,6 +103,23 @@ st.set_page_config(page_title="Daniel's Goal Tracker App",
                     layout="wide", 
                     initial_sidebar_state="expanded")
 
+st.markdown("""
+    <style>
+    /* Center text in the menu bar */
+    div[data-testid="stToolbar"] {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    div[data-testid="stToolbar"]::before {
+        content: "Goals Dashboard";
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        padding-right: 20px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 st.markdown(
     """

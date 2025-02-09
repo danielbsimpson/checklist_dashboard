@@ -66,7 +66,7 @@ daily_tasks = [
     ":tooth: (2x)Brush+(1x)Floss",
     ":droplet: Water (3L)",
     ":sleeping: 7 hours sleep",
-    "Clean (~20 min)",
+    ":broom: Clean (~20 min)",
     ":open_book: Read (~20 min)",
     ":pill: Vitamins",
     ":speaking_head_in_silhouette: Duolingo"
@@ -74,7 +74,7 @@ daily_tasks = [
 
 weekly_tasks = [
     ":shirt: Laundry",
-    ":broom: Cleaning",
+    ":plunger: Cleaning",
     ":shopping_trolley: Grocery Shop",
     ":male-cook: Meal Prep",
     ":male-student: Personal Development",

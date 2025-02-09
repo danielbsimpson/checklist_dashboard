@@ -116,7 +116,6 @@ st.markdown("""
         """font-size: 18px;
         font-weight: bold;
         color: white;
-        padding-left: 40px;
     }
     </style>
     """, unsafe_allow_html=True)

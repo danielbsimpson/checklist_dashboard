@@ -112,7 +112,7 @@ st.markdown("""
     }
     div[data-testid="stToolbar"]::before {
         content:""" + f""" "Goals Dashboard 📆 {formatted_today}";"""+
-        """font-size: 22px;
+        """font-size: 20px;
         font-weight: bold;
         color: white;
         padding-left: 20px;

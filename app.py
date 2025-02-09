@@ -108,7 +108,7 @@ st.markdown("""
     div[data-testid="stToolbar"] {
         display: flex;
         justify-content: flex-start;
-        align-items: center;
+        align-items: left;
         padding-left: 40px;
     }
     div[data-testid="stToolbar"]::before {

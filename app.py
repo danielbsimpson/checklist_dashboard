@@ -108,9 +108,9 @@ def convert_dates_to_string(record):
             record[key] = value.strftime('%Y-%m-%d')  # Convert date to string format
     return record
 
-# Your Supabase URL and API Key
-SUPABASE_URL = "https://jaspnnvfyhhjjnzndrvu.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imphc3BubnZmeWhoampuem5kcnZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkzODk2MjksImV4cCI6MjA1NDk2NTYyOX0.I6RJzvYjM3Vp85NP1BYGdwPBLbhI91kGXI4zJOcL4Xg"
+# # Your Supabase URL and API Key
+SUPABASE_URL = st.secrets["supabase"]["url"]
+SUPABASE_KEY = st.secrets["supabase"]["api_key"]
 
 # Create a Supabase client
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)

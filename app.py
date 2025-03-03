@@ -74,13 +74,16 @@ def format_goal_data(goal_data):
     Convert goal_data into a structured pandas DataFrame and clean column names
     """
     records = []
-    current_date = dt.datetime.today().date()
+    current_date = dt.datetime.today()
+    days_from_monday = current_time.weekday()
+    this_week_start = current_date - dt.timedelta(days=days_from_monday)
+    this_month_start = dt.datetime(current_time.year, current_time.month + 1, 1)
 
     for category, tasks in goal_data.items():
         record = {
             "DAILY_DATE": current_date if category == "daily" else None,
-            "WEEK_START": next_week_start.date() if category == "weekly" else None,
-            "MONTH_START": next_month_start.date() if category in ["monthly", "quarterly"] else None
+            "WEEK_START": this_week_start.date() if category == "weekly" else None,
+            "MONTH_START": this_month_start.date() if category in ["monthly", "quarterly"] else None
         }
 
         # Add task completion flags with cleaned column names

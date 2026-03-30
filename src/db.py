@@ -77,12 +77,17 @@ def clean_column_name(name: str) -> str:
     3. Drop all non-ASCII characters (real Unicode emoji, etc.).
     4. Replace any run of non-alphanumeric characters with a single "_".
     5. Strip leading/trailing underscores and upper-case.
+    6. Prefix with "TASK_" if the result starts with a digit (PostgreSQL
+       column names cannot begin with a number).
     """
     name = re.sub(r":.*?:", "", name)
     name = re.sub(r"\(.*?\)", "", name)
     name = name.encode("ascii", "ignore").decode()
     name = re.sub(r"[^a-zA-Z0-9]+", "_", name)
-    return name.strip("_").upper()
+    result = name.strip("_").upper()
+    if result and result[0].isdigit():
+        result = "TASK_" + result
+    return result
 
 
 def task_columns(category: str) -> list[str]:

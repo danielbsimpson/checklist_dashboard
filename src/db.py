@@ -122,6 +122,9 @@ def get_completed_tasks_from_row(row: dict) -> dict[str, list[str]]:
     Given a raw Supabase row dict, return a mapping of
     category → [task labels that have value 1 in the DB].
     Used on app startup to restore today's already-checked tasks.
+
+    Handles both integer (1/0) and boolean (True/False) column types,
+    as Supabase may return either depending on the table schema.
     """
     result: dict[str, list[str]] = {cat: [] for cat in ALL_TASKS}
     if not row:
@@ -129,7 +132,9 @@ def get_completed_tasks_from_row(row: dict) -> dict[str, list[str]]:
     for category, tasks in ALL_TASKS.items():
         for task in tasks:
             col = clean_column_name(task)
-            if row.get(col) == 1:
+            val = row.get(col)
+            # Accept both integer 1 and boolean True
+            if val == 1 or val is True:
                 result[category].append(task)
     return result
 
@@ -172,7 +177,9 @@ def save_task_to_supabase(now: dt.datetime, category: str, task: str) -> tuple[b
     for cat, tasks in ALL_TASKS.items():
         for t in tasks:
             col = clean_column_name(t)
-            record[col] = existing.get(col, 0)
+            existing_val = existing.get(col)
+            # Accept both integer 1 and boolean True from Supabase
+            record[col] = 1 if (existing_val == 1 or existing_val is True) else 0
 
     # Mark the newly ticked task as 1
     record[clean_column_name(task)] = 1

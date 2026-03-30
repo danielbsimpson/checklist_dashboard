@@ -48,7 +48,13 @@ def init_state(now: dt.datetime) -> None:
                 if k not in st.session_state:
                     st.session_state[k] = task in already_done.get(category, [])
 
-        st.session_state[today_sentinel] = True
+        # Only set the sentinel if the DB fetch actually returned data (or
+        # Supabase is disabled).  If the fetch returned an empty dict AND
+        # Supabase is enabled, it might be a transient error — don't lock in
+        # the "already loaded" sentinel so the next rerun retries.
+        from src.db import SUPABASE_ENABLED as _ENABLED
+        if not _ENABLED or row:
+            st.session_state[today_sentinel] = True
     else:
         # Subsequent reruns – only initialise keys that don't exist yet
         for category, tasks in ALL_TASKS.items():

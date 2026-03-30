@@ -19,7 +19,7 @@ import streamlit as st
 from src.checklist import render_checklist_tab
 from src.dashboard import render_dashboard
 from src.date_utils import format_date, get_reset_dates
-from src.db import SUPABASE_ENABLED, save_task_to_supabase, fetch_today_row, get_completed_tasks_from_row
+from src.db import SUPABASE_ENABLED, SUPABASE_ERROR, save_task_to_supabase, fetch_today_row, get_completed_tasks_from_row
 
 # ---------------------------------------------------------------------------
 # Page config  (must be the first Streamlit call)
@@ -45,11 +45,19 @@ st.markdown("""
 st.title(f"📆 Goals — {formatted_today}")
 
 if not SUPABASE_ENABLED:
-    st.info(
-        "Running without Supabase — progress won't persist across refreshes. "
-        "Add `[supabase]` credentials to `.streamlit/secrets.toml` to enable saving.",
-        icon="ℹ️",
-    )
+    if SUPABASE_ERROR:
+        st.error(
+            f"⚠️ Supabase connection failed: {SUPABASE_ERROR}\n\n"
+            "Check that your `secrets.toml` (local) or Streamlit Cloud Secrets "
+            "contains a `[supabase]` section with `url` and `api_key`.",
+            icon="🔴",
+        )
+    else:
+        st.info(
+            "Running without Supabase — progress won't persist across refreshes. "
+            "Add `[supabase]` credentials to `.streamlit/secrets.toml` to enable saving.",
+            icon="ℹ️",
+        )
 
 # ---------------------------------------------------------------------------
 # Top-level tabs

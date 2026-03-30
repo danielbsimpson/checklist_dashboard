@@ -5,23 +5,26 @@ UI components for the Checklist tab:
   - render_section()       – one collapsible goal category with progress bar
   - render_checklist_tab() – the full tab layout
 
-Save behaviour
---------------
-Every task is saved to Supabase the instant it is ticked, using the
-coalesce-merge strategy in db.save_task_to_supabase().  There is no manual
-Save button for individual goals — the explicit "Save Progress" button in
-app.py is kept as a way to force-sync the full day's state, but it is no
-longer the only path to persistence.
+Checkbox state strategy
+-----------------------
+We do NOT bind session-state keys directly to st.checkbox widgets.  Doing so
+causes a race condition: Streamlit resets the widget value on rerun, fighting
+our own session-state writes and making items reappear.
+
+Instead every task is rendered as a plain (unbound) checkbox.  We track
+completion state ourselves in session_state under namespaced keys.  The
+checkbox always renders as unchecked (it only appears when the task is NOT
+done); ticking it sets our own key, saves to Supabase, and reruns.
 """
 
 import datetime as dt
 
 import streamlit as st
 
-from src.config import ALL_TASKS, CATEGORY_COLORS
+from src.config import ALL_TASKS
 from src.date_utils import format_date, get_period_key, get_reset_dates
 from src.db import SUPABASE_ENABLED, save_task_to_supabase
-from src.state import _state_key, init_state, is_checked
+from src.state import _state_key, init_state, is_checked, mark_checked
 
 
 # ---------------------------------------------------------------------------
@@ -38,8 +41,11 @@ def render_section(
     """
     Render a labelled expander containing uncompleted tasks as checkboxes.
 
-    When a task is ticked it is immediately saved to Supabase (if connected)
-    and the app reruns so the item disappears from the list.
+    Each checkbox is rendered WITHOUT a session-state key binding to avoid
+    the widget/state race condition.  We manage state entirely ourselves:
+    - pending tasks are rendered as unchecked checkboxes
+    - ticking one sets our own session-state key, saves, and reruns
+    - on rerun the task moves from pending to checked and disappears
 
     Returns
     -------
@@ -78,22 +84,28 @@ def render_section(
             st.success("All done! 🎉")
         else:
             for task in pending_tasks:
-                k = _state_key(category, task, period_key)
-                checked = st.checkbox(task, key=k)
+                # Use a unique widget key per task+period but do NOT rely on
+                # its value — we control state ourselves to avoid the rerun
+                # race condition where Streamlit resets the widget back to False.
+                widget_key = f"_widget_{category}_{period_key}_{task}"
 
-                # Rising-edge guard: only act on the tick, not on every rerun
-                if checked and not st.session_state.get(f"_prev_{k}", False):
-                    st.session_state[f"_prev_{k}"] = True
+                # Always render as unchecked (task is in pending_tasks = not done)
+                ticked = st.checkbox(task, value=False, key=widget_key)
 
-                    # Auto-save this single task immediately
+                if ticked:
+                    # 1. Immediately record completion in our own state
+                    mark_checked(category, task, period_key)
+
+                    # 2. Auto-save to Supabase
                     if SUPABASE_ENABLED:
                         ok, msg = save_task_to_supabase(now, category, task)
                         if not ok:
                             st.toast(f"⚠️ Save failed: {msg}", icon="⚠️")
                         else:
-                            st.toast(f"Saved!", icon="✅")
+                            st.toast("Saved!", icon="✅")
                             st.cache_data.clear()
 
+                    # 3. Rerun so the task disappears from the list
                     st.rerun()
 
     return checked_tasks
@@ -106,7 +118,7 @@ def render_section(
 def render_checklist_tab(now: dt.datetime) -> dict[str, list[str]]:
     """
     Render the complete Checklist tab and return a mapping of
-    ``category → [checked task labels]`` for use by the save function.
+    ``category → [checked task labels]`` for use by the Force Sync button.
     """
     st.caption("Tick off a goal and it disappears until the next reset period.")
     init_state(now)

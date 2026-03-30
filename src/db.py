@@ -30,16 +30,37 @@ from src.config import ALL_TASKS
 # Client initialisation
 # ---------------------------------------------------------------------------
 
+SUPABASE_ENABLED: bool = False
+SUPABASE_ERROR: str = ""   # exposed so app.py can show a clear error banner
+supabase = None
+
 try:
     from supabase import create_client  # type: ignore
 
-    SUPABASE_URL: str = st.secrets["supabase"]["url"]
-    SUPABASE_KEY: str = st.secrets["supabase"]["api_key"]
+    # Support both "api_key" and "key" as the secret name, and also bare
+    # SUPABASE_URL / SUPABASE_KEY top-level secrets (common on Community Cloud)
+    _secrets = st.secrets.get("supabase", {})
+    SUPABASE_URL: str = (
+        _secrets.get("url")
+        or st.secrets.get("SUPABASE_URL", "")
+    )
+    SUPABASE_KEY: str = (
+        _secrets.get("api_key")
+        or _secrets.get("key")
+        or st.secrets.get("SUPABASE_KEY", "")
+    )
+
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        raise ValueError(
+            "Supabase credentials missing. Expected [supabase] url + api_key "
+            "in secrets.toml (or SUPABASE_URL / SUPABASE_KEY at top level)."
+        )
+
     supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-    SUPABASE_ENABLED: bool = True
-except Exception:
-    supabase = None
-    SUPABASE_ENABLED = False
+    SUPABASE_ENABLED = True
+
+except Exception as _e:
+    SUPABASE_ERROR = str(_e)
 
 # ---------------------------------------------------------------------------
 # Column name helpers

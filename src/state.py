@@ -46,11 +46,7 @@ def init_state(now: dt.datetime) -> None:
             for task in tasks:
                 k = _state_key(category, task, pk)
                 if k not in st.session_state:
-                    # Restore saved state; default to False if not in DB
                     st.session_state[k] = task in already_done.get(category, [])
-                    if st.session_state[k]:
-                        # Also set the rerun-guard so the item stays hidden
-                        st.session_state[f"_prev_{k}"] = True
 
         st.session_state[today_sentinel] = True
     else:

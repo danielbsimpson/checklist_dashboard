@@ -5,16 +5,17 @@ UI components for the Checklist tab:
   - render_section()       – one collapsible goal category with progress bar
   - render_checklist_tab() – the full tab layout
 
-Checkbox state strategy
------------------------
-We do NOT bind session-state keys directly to st.checkbox widgets.  Doing so
-causes a race condition: Streamlit resets the widget value on rerun, fighting
-our own session-state writes and making items reappear.
+Why st.button instead of st.checkbox
+-------------------------------------
+st.checkbox persists its value in st.session_state by widget key.  When a
+task is ticked and st.rerun() fires, Streamlit restores every widget from
+session_state — so the checkbox comes back True on the next render and the
+"if ticked" branch fires again for the wrong task.
 
-Instead every task is rendered as a plain (unbound) checkbox.  We track
-completion state ourselves in session_state under namespaced keys.  The
-checkbox always renders as unchecked (it only appears when the task is NOT
-done); ticking it sets our own key, saves to Supabase, and reruns.
+st.button has no persistent state: it returns True ONLY on the single rerun
+caused by the click, then automatically resets to False.  This is exactly
+the one-shot "did the user just tap this?" semantic we need.  We style the
+buttons to look like checkboxes using CSS so the UX is unchanged.
 """
 
 import datetime as dt
@@ -24,7 +25,37 @@ import streamlit as st
 from src.config import ALL_TASKS
 from src.date_utils import format_date, get_period_key, get_reset_dates
 from src.db import SUPABASE_ENABLED, save_task_to_supabase
-from src.state import _state_key, init_state, is_checked, mark_checked
+from src.state import init_state, is_checked, mark_checked, _state_key
+
+
+# Inject CSS once to make buttons look like checkboxes
+_CHECKBOX_CSS = """
+<style>
+/* Make goal buttons look like checkbox rows */
+div[data-testid="stButton"] > button {
+    background: none;
+    border: none;
+    padding: 2px 0;
+    margin: 0;
+    font-size: 1rem;
+    color: inherit;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
+}
+div[data-testid="stButton"] > button::before {
+    content: "☐  ";
+    font-size: 1.1rem;
+}
+div[data-testid="stButton"] > button:hover {
+    color: #2ecc71;
+    background: none;
+}
+div[data-testid="stButton"] > button:hover::before {
+    content: "☑  ";
+}
+</style>
+"""
 
 
 # ---------------------------------------------------------------------------
@@ -39,17 +70,14 @@ def render_section(
     expanded: bool = False,
 ) -> list[str]:
     """
-    Render a labelled expander containing uncompleted tasks as checkboxes.
+    Render a labelled expander showing only uncompleted tasks.
 
-    Each checkbox is rendered WITHOUT a session-state key binding to avoid
-    the widget/state race condition.  We manage state entirely ourselves:
-    - pending tasks are rendered as unchecked checkboxes
-    - ticking one sets our own session-state key, saves, and reruns
-    - on rerun the task moves from pending to checked and disappears
+    Each task is a st.button (styled as a checkbox).  Clicking it:
+      1. Records completion in session_state via mark_checked()
+      2. Auto-saves the single task to Supabase
+      3. Calls st.rerun() so the task disappears
 
-    Returns
-    -------
-    List of task labels that are currently checked in this period.
+    Returns the list of task labels currently marked as done this period.
     """
     period_key = get_period_key(category, now)
     checked_tasks = [t for t in tasks if is_checked(category, t, period_key)]
@@ -71,7 +99,6 @@ def render_section(
     with st.expander(label, expanded=expanded):
         st.caption(f"🔄 Resets {format_date(reset_dt)}")
 
-        # Inline progress bar
         st.markdown(
             f"""<div style="width:100%;background:#e0e0e0;border-radius:6px;margin-bottom:8px;">
                 <div style="width:{pct * 100:.1f}%;background:{bar_color};height:14px;
@@ -84,19 +111,13 @@ def render_section(
             st.success("All done! 🎉")
         else:
             for task in pending_tasks:
-                # Use a unique widget key per task+period but do NOT rely on
-                # its value — we control state ourselves to avoid the rerun
-                # race condition where Streamlit resets the widget back to False.
-                widget_key = f"_widget_{category}_{period_key}_{task}"
-
-                # Always render as unchecked (task is in pending_tasks = not done)
-                ticked = st.checkbox(task, value=False, key=widget_key)
-
-                if ticked:
-                    # 1. Immediately record completion in our own state
+                # Unique key per task — button state is never persisted across reruns
+                btn_key = f"btn|{category}|{period_key}|{task}"
+                if st.button(task, key=btn_key):
+                    # Mark done in our own session state
                     mark_checked(category, task, period_key)
 
-                    # 2. Auto-save to Supabase
+                    # Auto-save to Supabase
                     if SUPABASE_ENABLED:
                         ok, msg = save_task_to_supabase(now, category, task)
                         if not ok:
@@ -105,7 +126,6 @@ def render_section(
                             st.toast("Saved!", icon="✅")
                             st.cache_data.clear()
 
-                    # 3. Rerun so the task disappears from the list
                     st.rerun()
 
     return checked_tasks
@@ -120,7 +140,8 @@ def render_checklist_tab(now: dt.datetime) -> dict[str, list[str]]:
     Render the complete Checklist tab and return a mapping of
     ``category → [checked task labels]`` for use by the Force Sync button.
     """
-    st.caption("Tick off a goal and it disappears until the next reset period.")
+    st.markdown(_CHECKBOX_CSS, unsafe_allow_html=True)
+    st.caption("Tap a goal to mark it done — it disappears until the next reset period.")
     init_state(now)
 
     reset_dates = get_reset_dates(now)

@@ -84,9 +84,9 @@ def clean_column_name(name: str) -> str:
     name = re.sub(r"\(.*?\)", "", name)
     name = name.encode("ascii", "ignore").decode()
     name = re.sub(r"[^a-zA-Z0-9]+", "_", name)
-    result = name.strip("_").upper()
+    result = name.strip("_").lower()
     if result and result[0].isdigit():
-        result = "TASK_" + result
+        result = "task_" + result
     return result
 
 

@@ -103,7 +103,7 @@ def _render_daily_trends_tab(df: pd.DataFrame) -> None:
         fig2 = go.Figure()
         fig2.add_trace(go.Bar(
             x=roll_df["daily_date"], y=roll_df["completion"],
-            name="Daily %", marker_color=CATEGORY_COLORS["daily"] + "66",
+            name="Daily %", marker_color="rgba(52, 152, 219, 0.4)",
         ))
         fig2.add_trace(go.Scatter(
             x=roll_df["daily_date"], y=roll_df["7-day avg"],
@@ -288,7 +288,7 @@ def _render_weekly_monthly_tab(df: pd.DataFrame) -> None:
         r=radar_vals + [radar_vals[0]],
         theta=[c.capitalize() for c in radar_cats] + [radar_cats[0].capitalize()],
         fill="toself",
-        fillcolor=CATEGORY_COLORS["daily"] + "44",
+        fillcolor="rgba(52, 152, 219, 0.27)",
         line=dict(color=CATEGORY_COLORS["daily"]),
     ))
     fig_radar.update_layout(

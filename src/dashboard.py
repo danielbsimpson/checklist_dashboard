@@ -326,6 +326,285 @@ def _render_weekly_monthly_tab(df: pd.DataFrame) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Tab 5 – Year-on-Year & Month-on-Month comparisons
+# ---------------------------------------------------------------------------
+
+def _render_yoy_tab(df: pd.DataFrame) -> None:
+    daily_cols = _existing_cols(df, task_columns("daily"))
+
+    # Add helper columns once
+    df = df.copy()
+    df["year"]       = df["daily_date"].dt.year
+    df["month_num"]  = df["daily_date"].dt.month
+    df["month_name"] = df["daily_date"].dt.strftime("%b")
+    df["pct"]        = df[daily_cols].mean(axis=1) * 100 if daily_cols else 0.0
+
+    years      = sorted(df["year"].unique())
+    year_strs  = [str(y) for y in years]
+    color_seq  = px.colors.qualitative.Bold   # up to 10 distinct colours
+
+    # ── 1. Annual points accumulated (bar + line overlay) ────────────────
+    st.subheader("Total points per year")
+    st.caption("One 'point' = one completed daily goal on one day.")
+
+    if daily_cols:
+        annual = (
+            df.groupby("year")[daily_cols]
+            .sum()
+            .sum(axis=1)
+            .reset_index(name="Points")
+        )
+        annual["Year"] = annual["year"].astype(str)
+        annual["days_tracked"] = df.groupby("year").size().values
+        annual["avg_pct"] = (annual["Points"] / (annual["days_tracked"] * len(daily_cols)) * 100).round(1)
+
+        fig_pts = go.Figure()
+        fig_pts.add_trace(go.Bar(
+            x=annual["Year"], y=annual["Points"],
+            marker_color=[color_seq[i % len(color_seq)] for i in range(len(annual))],
+            text=annual["Points"], textposition="outside",
+            name="Points",
+        ))
+        fig_pts.add_trace(go.Scatter(
+            x=annual["Year"], y=annual["avg_pct"],
+            mode="lines+markers+text",
+            yaxis="y2",
+            name="Avg %",
+            line=dict(color="#f1c40f", width=2),
+            text=[f"{v:.0f}%" for v in annual["avg_pct"]],
+            textposition="top center",
+        ))
+        fig_pts.update_layout(
+            template=PLOTLY_TEMPLATE,
+            yaxis=dict(title="Total points"),
+            yaxis2=dict(title="Avg daily %", overlaying="y", side="right",
+                        range=[0, 110], showgrid=False),
+            legend=dict(orientation="h", y=1.08),
+            hovermode="x unified",
+            margin=dict(t=60),
+        )
+        st.plotly_chart(fig_pts, use_container_width=True)
+
+        # KPI row: year-over-year Δ
+        if len(annual) >= 2:
+            kpi_cols = st.columns(len(annual))
+            for i, row in annual.iterrows():
+                with kpi_cols[list(annual.index).index(i)]:
+                    delta = None
+                    if i > annual.index[0]:
+                        prev = annual.loc[annual.index[list(annual.index).index(i) - 1], "avg_pct"]
+                        delta = f"{row['avg_pct'] - prev:+.1f}%"
+                    st.metric(
+                        label=str(row["Year"]),
+                        value=f"{row['avg_pct']:.1f}%",
+                        delta=delta,
+                    )
+
+    st.divider()
+
+    # ── 2. Month-by-month heatmap across years ───────────────────────────
+    st.subheader("Monthly completion — all years side by side")
+    st.caption("Rows = calendar month · Columns = year · Colour = avg daily completion %")
+
+    month_year = (
+        df.groupby(["year", "month_num", "month_name"])["pct"]
+        .mean()
+        .reset_index()
+    )
+    pivot_my = month_year.pivot_table(
+        index="month_num", columns="year", values="pct"
+    )
+    month_labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+    # Reindex so all 12 rows exist (NaN for months with no data)
+    pivot_my = pivot_my.reindex(range(1, 13))
+
+    fig_my = go.Figure(go.Heatmap(
+        z=pivot_my.values,
+        x=[str(y) for y in pivot_my.columns],
+        y=[month_labels[i - 1] for i in pivot_my.index],
+        colorscale=[
+            [0.00, "#1a1a2e"],
+            [0.25, "#e74c3c"],
+            [0.50, "#e67e22"],
+            [0.75, "#f1c40f"],
+            [1.00, "#2ecc71"],
+        ],
+        zmin=0, zmax=100,
+        colorbar=dict(title="%", ticksuffix="%"),
+        hovertemplate="%{y} %{x}: %{z:.0f}%<extra></extra>",
+        text=[[f"{v:.0f}%" if not pd.isna(v) else "" for v in row]
+              for row in pivot_my.values],
+        texttemplate="%{text}",
+    ))
+    fig_my.update_layout(
+        template=PLOTLY_TEMPLATE,
+        height=420,
+        margin=dict(l=50, r=20, t=20, b=20),
+        xaxis_title="Year",
+        yaxis_title="",
+        yaxis=dict(autorange="reversed"),
+    )
+    st.plotly_chart(fig_my, use_container_width=True)
+
+    st.divider()
+
+    # ── 3. Same month across years (line chart) ──────────────────────────
+    st.subheader("How does this month compare to previous years?")
+
+    current_month_num  = dt.datetime.today().month
+    current_month_name = dt.datetime.today().strftime("%B")
+    month_options = {m: i + 1 for i, m in enumerate(
+        ["January","February","March","April","May","June",
+         "July","August","September","October","November","December"]
+    )}
+    selected_month_name = st.selectbox(
+        "Select month to compare",
+        options=list(month_options.keys()),
+        index=current_month_num - 1,
+        key="yoy_month_sel",
+    )
+    selected_month_num = month_options[selected_month_name]
+
+    month_slice = df[df["month_num"] == selected_month_num].copy()
+    month_slice["day_of_month"] = month_slice["daily_date"].dt.day
+
+    if month_slice.empty:
+        st.info(f"No data for {selected_month_name} yet.")
+    else:
+        fig_mom = go.Figure()
+        for i, yr in enumerate(sorted(month_slice["year"].unique())):
+            yr_data = (
+                month_slice[month_slice["year"] == yr]
+                .groupby("day_of_month")["pct"]
+                .mean()
+                .reset_index()
+                .sort_values("day_of_month")
+            )
+            is_current = (yr == dt.datetime.today().year)
+            fig_mom.add_trace(go.Scatter(
+                x=yr_data["day_of_month"],
+                y=yr_data["pct"],
+                mode="lines+markers",
+                name=str(yr),
+                line=dict(
+                    color=color_seq[i % len(color_seq)],
+                    width=3 if is_current else 1.5,
+                    dash="solid" if is_current else "dot",
+                ),
+                marker=dict(size=6 if is_current else 4),
+            ))
+        fig_mom.update_layout(
+            template=PLOTLY_TEMPLATE,
+            xaxis_title=f"Day of {selected_month_name}",
+            yaxis_title="Daily completion %",
+            yaxis_range=[0, 105],
+            legend_title="Year",
+            hovermode="x unified",
+        )
+        st.plotly_chart(fig_mom, use_container_width=True)
+
+        # Table: avg for each year in selected month
+        summary = (
+            month_slice.groupby("year")["pct"]
+            .agg(avg_pct="mean", days="count")
+            .reset_index()
+        )
+        summary.columns = ["Year", "Avg %", "Days tracked"]
+        summary["Avg %"] = summary["Avg %"].round(1)
+        st.dataframe(
+            summary.set_index("Year"),
+            use_container_width=True,
+        )
+
+    st.divider()
+
+    # ── 4. Year-on-Year per-habit comparison ─────────────────────────────
+    st.subheader("Per-habit completion — year over year")
+    st.caption("Each bar group = one habit · Each colour = one year")
+
+    if daily_cols:
+        from src.db import clean_column_name
+        task_label_map = {clean_column_name(t): t.split(" ", 1)[-1]
+                          for t in ALL_TASKS["daily"]}
+
+        habit_year = (
+            df.groupby("year")[daily_cols]
+            .mean()
+            .mul(100)
+            .reset_index()
+            .melt(id_vars="year", var_name="col", value_name="pct")
+        )
+        habit_year["Habit"] = habit_year["col"].map(task_label_map).fillna(habit_year["col"])
+        habit_year["Year"]  = habit_year["year"].astype(str)
+
+        fig_hby = px.bar(
+            habit_year,
+            x="Habit",
+            y="pct",
+            color="Year",
+            barmode="group",
+            template=PLOTLY_TEMPLATE,
+            labels={"pct": "Completion %", "Habit": ""},
+            color_discrete_sequence=color_seq,
+        )
+        fig_hby.update_layout(
+            yaxis_range=[0, 110],
+            xaxis_tickangle=-35,
+            legend_title="Year",
+            hovermode="x unified",
+        )
+        fig_hby.add_hline(y=80, line_dash="dot", line_color="#aaa",
+                          annotation_text="80% target")
+        st.plotly_chart(fig_hby, use_container_width=True)
+
+    st.divider()
+
+    # ── 5. Monthly rolling 30-day trend — year overlay ───────────────────
+    st.subheader("30-day rolling average — overlaid by year")
+    st.caption("Compares your rolling consistency across years on the same day-of-year axis.")
+
+    if daily_cols and len(df) >= 7:
+        roll_all = (
+            df.sort_values("daily_date")
+            .assign(roll30=lambda d: d["pct"].rolling(30, min_periods=5).mean())
+        )
+        roll_all["doy"] = roll_all["daily_date"].dt.dayofyear
+
+        fig_roll = go.Figure()
+        for i, yr in enumerate(sorted(roll_all["year"].unique())):
+            yr_data = roll_all[roll_all["year"] == yr].dropna(subset=["roll30"])
+            is_current = (yr == dt.datetime.today().year)
+            fig_roll.add_trace(go.Scatter(
+                x=yr_data["doy"],
+                y=yr_data["roll30"],
+                mode="lines",
+                name=str(yr),
+                line=dict(
+                    color=color_seq[i % len(color_seq)],
+                    width=3 if is_current else 1.5,
+                    dash="solid" if is_current else "dot",
+                ),
+            ))
+        # Light day-of-year x-axis labels (Jan, Feb…)
+        month_starts = [1, 32, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335]
+        fig_roll.update_layout(
+            template=PLOTLY_TEMPLATE,
+            xaxis=dict(
+                tickvals=month_starts,
+                ticktext=["Jan","Feb","Mar","Apr","May","Jun",
+                           "Jul","Aug","Sep","Oct","Nov","Dec"],
+                title="Month",
+            ),
+            yaxis=dict(title="30-day rolling avg %", range=[0, 105]),
+            legend_title="Year",
+            hovermode="x unified",
+        )
+        st.plotly_chart(fig_roll, use_container_width=True)
+
+
+# ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
 
@@ -373,11 +652,12 @@ def render_dashboard() -> None:
     _render_kpi_cards(df)
     st.divider()
 
-    dash_tab1, dash_tab2, dash_tab3, dash_tab4 = st.tabs([
+    dash_tab1, dash_tab2, dash_tab3, dash_tab4, dash_tab5 = st.tabs([
         "📅 Daily Trends",
         "📋 Per-Task Breakdown",
         "🔥 Habit Heatmap",
         "📆 Weekly / Monthly",
+        "📈 Year-on-Year",
     ])
 
     with dash_tab1:
@@ -391,3 +671,6 @@ def render_dashboard() -> None:
 
     with dash_tab4:
         _render_weekly_monthly_tab(df)
+
+    with dash_tab5:
+        _render_yoy_tab(df)

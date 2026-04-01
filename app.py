@@ -35,6 +35,41 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+# ---------------------------------------------------------------------------
+# Authentication gate
+# ---------------------------------------------------------------------------
+
+def _check_auth() -> bool:
+    """Return True if already authenticated; otherwise show login form and return False."""
+    if st.session_state.get("authenticated"):
+        return True
+
+    # Fetch the expected password from secrets (falls back to empty string so
+    # the app still works if [auth] is not configured — just with no gate).
+    expected = st.secrets.get("auth", {}).get("password", "")
+
+    st.title("🔒 Goal Tracker — Login")
+    with st.form("login_form"):
+        entered = st.text_input("Password", type="password")
+        submitted = st.form_submit_button("Log in", use_container_width=True)
+
+    if submitted:
+        if expected and entered == expected:
+            st.session_state["authenticated"] = True
+            st.rerun()
+        else:
+            st.error("Incorrect password. Please try again.")
+
+    return False
+
+
+if not _check_auth():
+    st.stop()
+
+# ---------------------------------------------------------------------------
+# Authenticated content starts here
+# ---------------------------------------------------------------------------
+
 st.markdown("""
     <style>
         .stCheckbox { margin-bottom: -0.4rem; }
@@ -73,7 +108,7 @@ with tab_checklist:
 
     with save_col:
         save_clicked = st.button(
-            "� Force Sync",
+            "🔄 Force Sync",
             use_container_width=True,
             disabled=not SUPABASE_ENABLED,
             help="Goals auto-save when ticked. Use this to manually re-sync all checked goals.",
@@ -122,3 +157,7 @@ with st.sidebar:
         st.write(f"**{cat.capitalize()}** → {format_date(rdt)}")
     st.divider()
     st.caption("Supabase: " + ("🟢 Connected" if SUPABASE_ENABLED else "🔴 Not configured"))
+    st.divider()
+    if st.button("🔓 Log out", use_container_width=True):
+        st.session_state["authenticated"] = False
+        st.rerun()

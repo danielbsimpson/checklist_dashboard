@@ -154,7 +154,7 @@ def render_checklist_tab(now: dt.datetime) -> dict[str, list[str]]:
             "daily", ALL_TASKS["daily"], reset_dates["daily"], now, expanded=True
         )
         completed_by_category["monthly"] = render_section(
-            "monthly", ALL_TASKS["monthly"], reset_dates["monthly"], now
+            "monthly", ALL_TASKS["monthly"], reset_dates["monthly"], now, expanded=True
         )
 
     with col2:
@@ -162,7 +162,7 @@ def render_checklist_tab(now: dt.datetime) -> dict[str, list[str]]:
             "weekly", ALL_TASKS["weekly"], reset_dates["weekly"], now, expanded=True
         )
         completed_by_category["quarterly"] = render_section(
-            "quarterly", ALL_TASKS["quarterly"], reset_dates["quarterly"], now
+            "quarterly", ALL_TASKS["quarterly"], reset_dates["quarterly"], now, expanded=True
         )
 
     return completed_by_category

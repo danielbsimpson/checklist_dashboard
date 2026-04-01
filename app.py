@@ -46,7 +46,7 @@ def _check_auth() -> bool:
 
     # Fetch the expected password from secrets (falls back to empty string so
     # the app still works if [auth] is not configured — just with no gate).
-    expected = st.secrets.get("auth", {}).get("password", "")
+    expected = st.secrets.get("password", "")
 
     st.title("🔒 Goal Tracker — Login")
     with st.form("login_form"):

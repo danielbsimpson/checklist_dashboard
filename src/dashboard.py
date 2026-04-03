@@ -21,6 +21,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from src.config import ALL_TASKS, CATEGORY_COLORS, PLOTLY_TEMPLATE
+from src.date_utils import now_eastern
 from src.db import SUPABASE_ENABLED, fetch_all_records, task_columns
 
 
@@ -453,8 +454,9 @@ def _render_yoy_tab(df: pd.DataFrame) -> None:
     # ── 3. Same month across years (line chart) ──────────────────────────
     st.subheader("How does this month compare to previous years?")
 
-    current_month_num  = dt.datetime.today().month
-    current_month_name = dt.datetime.today().strftime("%B")
+    _today = now_eastern()
+    current_month_num  = _today.month
+    current_month_name = _today.strftime("%B")
     month_options = {m: i + 1 for i, m in enumerate(
         ["January","February","March","April","May","June",
          "July","August","September","October","November","December"]
@@ -482,7 +484,7 @@ def _render_yoy_tab(df: pd.DataFrame) -> None:
                 .reset_index()
                 .sort_values("day_of_month")
             )
-            is_current = (yr == dt.datetime.today().year)
+            is_current = (yr == _today.year)
             fig_mom.add_trace(go.Scatter(
                 x=yr_data["day_of_month"],
                 y=yr_data["pct"],
@@ -575,7 +577,7 @@ def _render_yoy_tab(df: pd.DataFrame) -> None:
         fig_roll = go.Figure()
         for i, yr in enumerate(sorted(roll_all["year"].unique())):
             yr_data = roll_all[roll_all["year"] == yr].dropna(subset=["roll30"])
-            is_current = (yr == dt.datetime.today().year)
+            is_current = (yr == _today.year)
             fig_roll.add_trace(go.Scatter(
                 x=yr_data["doy"],
                 y=yr_data["roll30"],

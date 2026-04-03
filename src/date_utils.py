@@ -6,6 +6,14 @@ No Streamlit or Supabase dependencies – fully unit-testable.
 """
 
 import datetime as dt
+import zoneinfo
+
+_ET = zoneinfo.ZoneInfo("America/New_York")
+
+
+def now_eastern() -> dt.datetime:
+    """Return the current date/time in US Eastern (ET), auto-adjusting for DST."""
+    return dt.datetime.now(tz=_ET).replace(tzinfo=None)
 
 
 # ---------------------------------------------------------------------------

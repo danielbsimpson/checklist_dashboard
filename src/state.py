@@ -32,14 +32,14 @@ def init_state(now: dt.datetime) -> None:
     session state so previously checked goals stay hidden across sessions.
     Subsequent reruns within the same session skip the Supabase fetch.
     """
-    from src.db import fetch_today_row, get_completed_tasks_from_row  # avoid circular import at module level
+    from src.db import fetch_period_rows, get_completed_tasks_from_rows  # avoid circular import at module level
 
     today_sentinel = f"_loaded_{now.strftime('%Y-%m-%d')}"
 
     if today_sentinel not in st.session_state:
         # First load of this day in this browser session — restore from DB
-        row = fetch_today_row(now)
-        already_done = get_completed_tasks_from_row(row)
+        rows = fetch_period_rows(now)
+        already_done = get_completed_tasks_from_rows(rows, now)
 
         for category, tasks in ALL_TASKS.items():
             pk = get_period_key(category, now)
@@ -49,11 +49,11 @@ def init_state(now: dt.datetime) -> None:
                     st.session_state[k] = task in already_done.get(category, [])
 
         # Only set the sentinel if the DB fetch actually returned data (or
-        # Supabase is disabled).  If the fetch returned an empty dict AND
+        # Supabase is disabled).  If the fetch returned an empty list AND
         # Supabase is enabled, it might be a transient error — don't lock in
         # the "already loaded" sentinel so the next rerun retries.
         from src.db import SUPABASE_ENABLED as _ENABLED
-        if not _ENABLED or row:
+        if not _ENABLED or rows:
             st.session_state[today_sentinel] = True
     else:
         # Subsequent reruns – only initialise keys that don't exist yet

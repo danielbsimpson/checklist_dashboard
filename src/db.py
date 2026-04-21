@@ -122,6 +122,47 @@ def fetch_today_row(now: dt.datetime) -> dict:
     return {}
 
 
+def _get_period_start_dates(now: dt.datetime) -> dict[str, str]:
+    """Return the ISO start date string for each category's current period."""
+    monday = (now - dt.timedelta(days=now.weekday())).date()
+    q = (now.month - 1) // 3
+    quarter_month = q * 3 + 1
+    return {
+        "daily":     now.strftime("%Y-%m-%d"),
+        "weekly":    str(monday),
+        "monthly":   now.strftime("%Y-%m-01"),
+        "quarterly": f"{now.year}-{quarter_month:02d}-01",
+    }
+
+
+def fetch_period_rows(now: dt.datetime) -> list[dict]:
+    """
+    Fetch all rows from the start of the current quarter through today.
+
+    This covers every period type — daily, weekly, monthly, quarterly — so
+    tasks checked on any earlier day within the current period are found.
+    For example, a weekly task ticked on Monday will still be seen as done
+    when the app is loaded on Tuesday or later in the same week.
+    """
+    if not SUPABASE_ENABLED:
+        return []
+    try:
+        q = (now.month - 1) // 3
+        quarter_start = dt.datetime(now.year, q * 3 + 1, 1)
+        start_str = quarter_start.strftime("%Y-%m-%d")
+        end_str = now.strftime("%Y-%m-%d")
+        resp = (
+            supabase.table("goals")
+            .select("*")
+            .gte("daily_date", start_str)
+            .lte("daily_date", end_str)
+            .execute()
+        )
+        return resp.data or []
+    except Exception:
+        return []
+
+
 def get_completed_tasks_from_row(row: dict) -> dict[str, list[str]]:
     """
     Given a raw Supabase row dict, return a mapping of
@@ -140,6 +181,36 @@ def get_completed_tasks_from_row(row: dict) -> dict[str, list[str]]:
             val = row.get(col)
             # Accept both integer 1 and boolean True
             if val == 1 or val is True:
+                result[category].append(task)
+    return result
+
+
+def get_completed_tasks_from_rows(rows: list[dict], now: dt.datetime) -> dict[str, list[str]]:
+    """
+    Given a list of Supabase rows, return a mapping of
+    category → [task labels completed within the current period].
+
+    For each category only rows within that category's current period are
+    considered: daily tasks only check today, weekly tasks check Monday
+    through today, monthly tasks check the 1st of the month through today,
+    and quarterly tasks check the 1st of the quarter through today.
+
+    A task is considered done if ANY row in the period has it set to 1.
+    """
+    result: dict[str, list[str]] = {cat: [] for cat in ALL_TASKS}
+    if not rows:
+        return result
+    period_starts = _get_period_start_dates(now)
+    today_str = now.strftime("%Y-%m-%d")
+    for category, tasks in ALL_TASKS.items():
+        start_str = period_starts[category]
+        relevant_rows = [
+            r for r in rows
+            if start_str <= r.get("daily_date", "") <= today_str
+        ]
+        for task in tasks:
+            col = clean_column_name(task)
+            if any(r.get(col) == 1 or r.get(col) is True for r in relevant_rows):
                 result[category].append(task)
     return result
 

@@ -19,7 +19,7 @@ import streamlit as st
 from src.checklist import render_checklist_tab
 from src.dashboard import render_dashboard
 from src.date_utils import format_date, get_reset_dates, now_eastern
-from src.db import SUPABASE_ENABLED, SUPABASE_ERROR, save_task_to_supabase, fetch_today_row, get_completed_tasks_from_row
+from src.db import SUPABASE_ENABLED, SUPABASE_ERROR, save_task_to_supabase
 
 # ---------------------------------------------------------------------------
 # Page config  (must be the first Streamlit call)

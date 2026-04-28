@@ -1,0 +1,31 @@
+# Expo / Metro
+node_modules/
+.expo/
+dist/
+web-build/
+
+# Local env — contains Supabase credentials, never commit
+.env
+.env.local
+
+# EAS / build artefacts
+*.ipa
+*.apk
+*.aab
+
+# iOS
+ios/
+android/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp

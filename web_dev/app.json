@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "Goal Tracker",
+    "slug": "goal-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "goaltracker",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#151718"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.goaltracker.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Used to authenticate access to your goals.",
+        "UIBackgroundModes": ["fetch"]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#151718"
+      },
+      "package": "com.goaltracker.app"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png",
+      "name": "Goal Tracker",
+      "shortName": "Goals",
+      "description": "Daily, weekly, monthly and quarterly goal tracker",
+      "themeColor": "#3498db",
+      "backgroundColor": "#151718",
+      "display": "standalone",
+      "startUrl": "/"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#151718"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

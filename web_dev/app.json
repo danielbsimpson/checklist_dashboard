@@ -41,7 +41,7 @@
       "themeColor": "#3498db",
       "backgroundColor": "#151718",
       "display": "standalone",
-      "startUrl": "/"
+      "startUrl": "/goal-tracker"
     },
     "plugins": [
       "expo-router",
@@ -57,7 +57,8 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "baseUrl": "/goal-tracker"
     },
     "extra": {
       "router": {

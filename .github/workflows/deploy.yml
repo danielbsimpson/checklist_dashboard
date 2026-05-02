@@ -1,0 +1,64 @@
+name: Deploy Goal Tracker to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web_dev/**"
+  workflow_dispatch: # allow manual trigger from GitHub UI
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Check out this repo ──────────────────────────────────────────
+      - name: Checkout checklist_dashboard
+        uses: actions/checkout@v4
+
+      # ── 2. Node.js setup ────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web_dev/package-lock.json
+
+      # ── 3. Install dependencies ─────────────────────────────────────────
+      - name: Install dependencies
+        working-directory: web_dev
+        run: npm ci
+
+      # ── 4. Export static web build ──────────────────────────────────────
+      - name: Export static web app
+        working-directory: web_dev
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+        run: npx expo export --platform web
+
+      # ── 5. Push dist/ into goal-tracker/ in your username.github.io repo ─
+      # Requires a PAT saved as PAGES_DEPLOY_TOKEN with repo scope.
+      # Replace YOUR_GITHUB_USERNAME below with your actual GitHub username.
+      - name: Deploy to username.github.io/goal-tracker
+        env:
+          DEPLOY_TOKEN: ${{ secrets.PAGES_DEPLOY_TOKEN }}
+          # ⚠️  Change this to your real username/username.github.io repo:
+          PAGES_REPO: danielbsimpson/danielbsimpson.github.io
+        run: |
+          git clone --depth 1 \
+            "https://x-access-token:${DEPLOY_TOKEN}@github.com/${PAGES_REPO}.git" \
+            /tmp/pages
+
+          # Clear previous build then copy fresh output
+          rm -rf /tmp/pages/goal-tracker
+          cp -r web_dev/dist/. /tmp/pages/goal-tracker/
+
+          cd /tmp/pages
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name  "github-actions[bot]"
+          git add -A
+          # Only commit if there are actual changes
+          git diff --quiet && git diff --staged --quiet \
+            || git commit -m "chore: deploy goal-tracker $(date -u +'%Y-%m-%d %H:%M') [skip ci]"
+          git push

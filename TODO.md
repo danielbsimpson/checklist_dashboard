@@ -144,39 +144,39 @@ Rebuild `checklist.py` / `render_section()` as React Native components.
 
 ---
 
-## Phase 3 — Dashboard Tab
+## Phase 3 — Dashboard Tab ✅
 
 Rebuild `dashboard.py` as a scrollable screen with five inner tabs. Charts rendered with `victory-native` or `react-native-gifted-charts`.
 
 ### Shared
-- [ ] Date-range filter at the top (start/end date pickers) scoping all charts
-- [ ] Four KPI summary cards (avg completion % per category, colour-coded)
-- [ ] `useDashboardData()` hook — fetches `fetchAllRecords()`, filters by date range, memoises
+- [x] Date-range filter at the top (start/end date pickers) scoping all charts
+- [x] Four KPI summary cards (avg completion % per category, colour-coded)
+- [x] `useDashboardData()` hook — fetches `fetchAllRecords()`, filters by date range, memoises
 
 ### Inner Tab 1 — Daily Trends
-- [ ] Multi-line chart: completion % over time, one line per category
-- [ ] 7-day rolling average bar+line overlay for daily goals
+- [x] Multi-line chart: completion % over time, one line per category
+- [x] 7-day rolling average bar+line overlay for daily goals
 
 ### Inner Tab 2 — Per-Task Breakdown
-- [ ] Category selector (segmented control)
-- [ ] Horizontal bar chart: tasks ranked by lifetime completion %
-- [ ] 80% target line; best/worst habit callout labels
+- [x] Category selector (segmented control)
+- [x] Horizontal bar chart: tasks ranked by lifetime completion %
+- [x] 80% target line; best/worst habit callout labels
 
 ### Inner Tab 3 — Habit Heatmap
-- [ ] GitHub-style grid (rows = Mon–Sun, columns = ISO weeks), coloured by daily completion %
-- [ ] Current streak, longest streak, total days tracked — displayed as stat chips
+- [x] GitHub-style grid (rows = Mon–Sun, columns = ISO weeks), coloured by daily completion %
+- [x] Current streak, longest streak, total days tracked — displayed as stat chips
 
 ### Inner Tab 4 — Weekly / Monthly
-- [ ] Weekly aggregated bar chart
-- [ ] Monthly radar/spider chart comparing all four categories
-- [ ] Day-of-week performance bar chart
+- [x] Weekly aggregated bar chart
+- [x] Monthly radar/spider chart comparing all four categories
+- [x] Day-of-week performance bar chart
 
 ### Inner Tab 5 — Year-on-Year
-- [ ] Total points per year bar chart with avg completion % right-axis overlay and YoY delta cards
-- [ ] Monthly heatmap grid (12 months × N years)
-- [ ] Same-month-across-years line chart with year picker
-- [ ] Per-habit YoY grouped bar chart
-- [ ] 30-day rolling average year overlay
+- [x] Total points per year bar chart with avg completion % right-axis overlay and YoY delta cards
+- [x] Monthly heatmap grid (12 months × N years)
+- [x] Same-month-across-years line chart with year picker
+- [x] Per-habit YoY grouped bar chart
+- [x] 30-day rolling average year overlay
 
 ---
 

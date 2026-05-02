@@ -36,8 +36,14 @@ let _client: SupabaseClient | null = null;
 
 function getClient(): SupabaseClient {
   if (!_client) {
+    // On web, use localStorage directly to avoid AsyncStorage init hanging.
+    const isWeb = typeof window !== "undefined" && typeof localStorage !== "undefined";
     _client = createClient(SUPABASE_URL, SUPABASE_KEY, {
-      auth: { storage: AsyncStorage, autoRefreshToken: true, persistSession: true },
+      auth: {
+        storage: isWeb ? localStorage : AsyncStorage,
+        autoRefreshToken: true,
+        persistSession: true,
+      },
     });
   }
   return _client;
@@ -92,14 +98,20 @@ export async function fetchPeriodRows(now: Date): Promise<GoalsRow[]> {
     const qStart = `${y}-${String(qMonth).padStart(2, "0")}-01`;
     const today  = `${y}-${String(m).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
-    const { data, error } = await getClient()
+    const timeout = new Promise<GoalsRow[]>((resolve) =>
+      setTimeout(() => resolve([]), 10_000)
+    );
+    const query = getClient()
       .from("goals")
       .select("*")
       .gte("daily_date", qStart)
-      .lte("daily_date", today);
+      .lte("daily_date", today)
+      .then(({ data, error }) => {
+        if (error || !data) return [];
+        return data as GoalsRow[];
+      });
 
-    if (error) return [];
-    return (data as GoalsRow[]) ?? [];
+    return await Promise.race([query, timeout]);
   } catch {
     return [];
   }

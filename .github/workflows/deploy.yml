@@ -55,12 +55,21 @@ jobs:
 
           # Clear previous build then copy fresh output
           rm -rf /tmp/pages/goal-tracker
+          mkdir -p /tmp/pages/goal-tracker
           cp -r web_dev/dist/. /tmp/pages/goal-tracker/
+
+          # Ensure _expo/ assets are not gitignored in the pages repo
+          if [ -f /tmp/pages/.gitignore ]; then
+            sed -i '/_expo/d' /tmp/pages/.gitignore
+          fi
+
+          echo "Deployed files:"
+          find /tmp/pages/goal-tracker -type f | head -30
 
           cd /tmp/pages
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name  "github-actions[bot]"
-          git add -A
+          git add -A --force
           # Only commit if there are actual changes
           git diff --quiet && git diff --staged --quiet \
             || git commit -m "chore: deploy goal-tracker $(date -u +'%Y-%m-%d %H:%M') [skip ci]"

@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
           cache-dependency-path: web_dev/package-lock.json
 
@@ -39,13 +39,16 @@ jobs:
 
       # ── 5. Push dist/ into goal-tracker/ in your username.github.io repo ─
       # Requires a PAT saved as PAGES_DEPLOY_TOKEN with repo scope.
-      # Replace YOUR_GITHUB_USERNAME below with your actual GitHub username.
       - name: Deploy to username.github.io/goal-tracker
         env:
           DEPLOY_TOKEN: ${{ secrets.PAGES_DEPLOY_TOKEN }}
-          # ⚠️  Change this to your real username/username.github.io repo:
           PAGES_REPO: danielbsimpson/danielbsimpson.github.io
         run: |
+          if [ -z "$DEPLOY_TOKEN" ]; then
+            echo "ERROR: PAGES_DEPLOY_TOKEN secret is not set or is empty."
+            exit 1
+          fi
+
           git clone --depth 1 \
             "https://x-access-token:${DEPLOY_TOKEN}@github.com/${PAGES_REPO}.git" \
             /tmp/pages

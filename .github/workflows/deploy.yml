@@ -58,10 +58,8 @@ jobs:
           mkdir -p /tmp/pages/goal-tracker
           cp -r web_dev/dist/. /tmp/pages/goal-tracker/
 
-          # Ensure _expo/ assets are not gitignored in the pages repo
-          if [ -f /tmp/pages/.gitignore ]; then
-            sed -i '/_expo/d' /tmp/pages/.gitignore
-          fi
+          # Disable Jekyll so GitHub Pages serves _expo/ and other _ folders
+          touch /tmp/pages/.nojekyll
 
           echo "Deployed files:"
           find /tmp/pages/goal-tracker -type f | head -30

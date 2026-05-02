@@ -66,3 +66,31 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   monthly:   "#e67e22",
   quarterly: "#9b59b6",
 };
+
+// ---------------------------------------------------------------------------
+// Column name helper (mirrors clean_column_name() in db.py)
+// ---------------------------------------------------------------------------
+
+/**
+ * Sanitise a task label into a safe Supabase / PostgreSQL column name.
+ *
+ * Steps (identical to the Python version):
+ * 1. Strip :emoji_code: shortcodes.
+ * 2. Strip parenthetical notes, e.g. "(>20 min)".
+ * 3. Drop all non-ASCII characters (real Unicode emoji, etc.).
+ * 4. Replace any run of non-alphanumeric characters with a single "_".
+ * 5. Strip leading/trailing underscores and lower-case.
+ * 6. Prefix with "task_" if the result starts with a digit.
+ */
+export function cleanColumnName(name: string): string {
+  let s = name.replace(/:.*?:/g, "");
+  s = s.replace(/\(.*?\)/g, "");
+  // Drop non-ASCII (emoji, accented chars, etc.)
+  s = s.replace(/[^\x00-\x7F]/g, "");
+  s = s.replace(/[^a-zA-Z0-9]+/g, "_");
+  s = s.replace(/^_+|_+$/g, "").toLowerCase();
+  if (s.length > 0 && /^[0-9]/.test(s)) {
+    s = "task_" + s;
+  }
+  return s;
+}

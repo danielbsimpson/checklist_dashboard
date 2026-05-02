@@ -85,10 +85,10 @@ Migrate the Streamlit Goal Tracker into a native iOS app while keeping the exist
 - [x] `hooks/useColorScheme.ts` + `.web.ts` — platform-aware colour scheme hook
 - [x] `src/config.ts` — `ALL_TASKS`, `CATEGORY_COLORS`, `Category` type (direct port of `config.py`)
 - [x] `src/types.ts` — `GoalsRow`, `CompletedTasks`, `ChecklistState`, `SaveResult` interfaces
-- [ ] **Run `npm install`** in `web_dev/` after installing Node.js
-- [ ] **Run `npx eas init`** to link the project to Expo Application Services (requires free Expo account at expo.dev)
+- [x] **Run `npm install`** in `web_dev/` after installing Node.js
+- [x] **Run `npx eas init`** to link the project to Expo Application Services (requires free Expo account at expo.dev)
 - [ ] Update `eas.json` → `submit.production.ios` with your Apple ID, App Store Connect App ID, and Team ID
-- [ ] Update `app.json` → `ios.bundleIdentifier` from `com.goaltracker.app` to your preferred reverse-domain ID
+- [x] Update `app.json` → `ios.bundleIdentifier` from `com.goaltracker.app` to your preferred reverse-domain ID
 
 ---
 
@@ -97,30 +97,30 @@ Migrate the Streamlit Goal Tracker into a native iOS app while keeping the exist
 Port the Python `src/` modules to TypeScript. These are pure logic — no Streamlit imports — so they translate almost 1:1.
 
 ### `src/config.ts`
-- [ ] Export `ALL_TASKS` object (daily/weekly/monthly/quarterly arrays) matching `config.py` exactly
-- [ ] Export `CATEGORY_COLORS` record
-- [ ] Export `cleanColumnName(name: string): string` — same regex logic as `clean_column_name()` in `db.py`
+- [x] Export `ALL_TASKS` object (daily/weekly/monthly/quarterly arrays) matching `config.py` exactly
+- [x] Export `CATEGORY_COLORS` record
+- [x] Export `cleanColumnName(name: string): string` — same regex logic as `clean_column_name()` in `db.py`
 
 ### `src/date_utils.ts`
-- [ ] `getPeriodKey(category, now)` → same stable string per period (e.g. `"2026-04-27"`, `"week-2026-04-27"`)
-- [ ] `getResetDates(now)` → next reset datetime per category
-- [ ] `formatDate(dt)` → human-readable string
-- [ ] `getPeriodStartDates(now)` → ISO start date per category (for DB queries)
+- [x] `getPeriodKey(category, now)` → same stable string per period (e.g. `"2026-04-27"`, `"week-2026-04-27"`)
+- [x] `getResetDates(now)` → next reset datetime per category
+- [x] `formatDate(dt)` → human-readable string
+- [x] `getPeriodStartDates(now)` → ISO start date per category (for DB queries)
 
 ### `src/db.ts`
-- [ ] Initialise `supabase` client from secure store; export `SUPABASE_ENABLED` flag
-- [ ] `fetchPeriodRows(now)` → rows from quarter-start through today
-- [ ] `fetchTodayRow(now)` → single row for today
-- [ ] `saveTaskToSupabase(now, category, task)` → fetch → coalesce-merge → upsert (1s never overwritten)
-- [ ] `getCompletedTasksFromRows(rows, now)` → `{category: task[]}` for session restore
-- [ ] `fetchAllRecords()` → full history for dashboard (cache with a TTL, e.g. 5 min via `AsyncStorage` timestamp)
-- [ ] `taskColumns(category)` → DB column names for a category
+- [x] Initialise `supabase` client from secure store; export `SUPABASE_ENABLED` flag
+- [x] `fetchPeriodRows(now)` → rows from quarter-start through today
+- [x] `fetchTodayRow(now)` → single row for today
+- [x] `saveTaskToSupabase(now, category, task)` → fetch → coalesce-merge → upsert (1s never overwritten)
+- [x] `getCompletedTasksFromRows(rows, now)` → `{category: task[]}` for session restore
+- [x] `fetchAllRecords()` → full history for dashboard (cache with a TTL, e.g. 5 min via `AsyncStorage` timestamp)
+- [x] `taskColumns(category)` → DB column names for a category
 
 ### `src/state.ts`
-- [ ] `initState(now)` → load `AsyncStorage`, call `fetchPeriodRows`, populate completed tasks; run once per day via a date sentinel key
-- [ ] `isChecked(category, task, periodKey)` → boolean
-- [ ] `markChecked(category, task, periodKey)` → update in-memory state
-- [ ] Use React Context or Zustand store to share state across tabs without prop drilling
+- [x] `initState(now)` → load `AsyncStorage`, call `fetchPeriodRows`, populate completed tasks; run once per day via a date sentinel key
+- [x] `isChecked(category, task, periodKey)` → boolean
+- [x] `markChecked(category, task, periodKey)` → update in-memory state
+- [x] Use React Context or Zustand store to share state across tabs without prop drilling
 
 ---
 
@@ -128,19 +128,19 @@ Port the Python `src/` modules to TypeScript. These are pure logic — no Stream
 
 Rebuild `checklist.py` / `render_section()` as React Native components.
 
-- [ ] **`ChecklistScreen.tsx`** — top-level tab screen; shows four `CategorySection` components
-- [ ] **`CategorySection.tsx`** — collapsible section (one per category) with:
+- [x] **`ChecklistScreen.tsx`** — top-level tab screen; shows four `CategorySection` components
+- [x] **`CategorySection.tsx`** — collapsible section (one per category) with:
   - Category title and colour accent
   - Colour-coded progress bar (red → orange → yellow → green, matching current thresholds)
   - Period reset countdown (e.g. "Resets Monday")
   - List of unchecked tasks only (completed tasks are hidden until period resets)
-- [ ] **`TaskRow.tsx`** — single task row styled as a checkbox:
+- [x] **`TaskRow.tsx`** — single task row styled as a checkbox:
   - Tap triggers `saveTaskToSupabase()` immediately (auto-save, no button)
   - Optimistic UI update (mark checked locally before await resolves)
   - Show brief toast/snackbar on save success or error (replaces `st.toast`)
-- [ ] **Force Sync button** — re-saves all currently checked tasks; shown at bottom of screen
-- [ ] **Offline banner** — shown when `SUPABASE_ENABLED` is false
-- [ ] On app foreground (via `AppState` listener), re-check if the period has rolled over and reset state if so (replaces Streamlit's per-render period check)
+- [x] **Force Sync button** — re-saves all currently checked tasks; shown at bottom of screen
+- [x] **Offline banner** — shown when `SUPABASE_ENABLED` is false
+- [x] On app foreground (via `AppState` listener), re-check if the period has rolled over and reset state if so (replaces Streamlit's per-render period check)
 
 ---
 
@@ -182,14 +182,52 @@ Rebuild `dashboard.py` as a scrollable screen with five inner tabs. Charts rende
 
 ## Phase 4 — PWA Deployment
 
+> **Deployment target: GitHub Pages** (existing `username.github.io` site).
+> `npx expo export --platform web` produces a fully static `dist/` folder — HTML, JS, CSS, and assets — which GitHub Pages serves directly. No separate host needed.
+
+### Build
 - [ ] Add `expo-router`'s web support: `npx expo install expo-router/web`
 - [ ] Add `public/manifest.json` with app name, icons (192px, 512px), `display: standalone`, `theme_color`
 - [ ] Add a Service Worker (via `@expo/webpack-config` or a custom `workbox` config) for offline caching of the app shell
-- [ ] Run `npx expo export --platform web` to generate static build
-- [ ] Deploy to **Vercel** or **Netlify** (free tier) — connect GitHub repo, set build command to `npx expo export --platform web`, output dir to `dist/`
-- [ ] Set Supabase URL and anon key as environment variables in the hosting platform (never in source)
+- [ ] Run `npx expo export --platform web` to generate static `dist/` folder
+
+### GitHub Pages deployment
+- [ ] **Decide on URL path** — two scenarios:
+  - **Root site** (`username.github.io`) — push `dist/` contents to `main` branch of the `username.github.io` repo; no path config needed
+  - **Project sub-path** (`username.github.io/goal-tracker`) — add `"baseUrl": "/goal-tracker"` to `app.json` → `expo.web` so asset paths resolve correctly, then push to the `gh-pages` branch of the `checklist_dashboard` repo
+- [ ] **Add GitHub Action** to auto-deploy on every push to `main`:
+  ```yaml
+  # .github/workflows/deploy.yml
+  name: Deploy PWA to GitHub Pages
+  on:
+    push:
+      branches: [main]
+  jobs:
+    deploy:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with: { node-version: 20 }
+        - run: npm ci
+          working-directory: web_dev
+        - run: npx expo export --platform web
+          working-directory: web_dev
+          env:
+            EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+            EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+        - uses: peaceiris/actions-gh-pages@v4
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./web_dev/dist
+  ```
+- [ ] Add `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` as **GitHub Actions secrets** (repo → Settings → Secrets and variables → Actions)
+  > The Supabase anon key is intentionally public-facing — it is baked into the JS bundle at build time. Your Supabase Row Level Security policy is what protects the data, not key secrecy.
+- [ ] Configure Supabase Auth → allowed redirect URLs to include the GitHub Pages domain
+
+### PWA verification
 - [ ] Test "Add to Home Screen" in Safari on iPhone — confirm standalone mode, icon, and splash screen
-- [ ] Configure Supabase Auth → allowed redirect URLs to include the PWA domain
+- [ ] Verify offline behaviour: app shell loads without network; Supabase calls fail gracefully
 
 ---
 

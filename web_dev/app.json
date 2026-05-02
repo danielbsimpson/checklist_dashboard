@@ -19,7 +19,9 @@
       "buildNumber": "1",
       "infoPlist": {
         "NSFaceIDUsageDescription": "Used to authenticate access to your goals.",
-        "UIBackgroundModes": ["fetch"]
+        "UIBackgroundModes": [
+          "fetch"
+        ]
       }
     },
     "android": {
@@ -56,6 +58,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "96eca891-10b3-4a3f-86dc-b6a1551b3049"
+      }
+    },
+    "owner": "danielbsimpson"
   }
 }
